@@ -1,7 +1,8 @@
 
 
-body {
+html, body {
     font-family: "Raleway", serif;
     font-weight: normal;
+    scrollbar-width: none;
   }
   
