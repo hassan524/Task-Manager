@@ -16,17 +16,21 @@
     "@radix-ui/react-tooltip": "^1.1.6",
     "@reduxjs/toolkit": "^2.5.0",
     "aos": "^2.3.4",
+    "bootstrap-icons": "^1.11.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "firebase": "^11.1.0",
     "hamburger-react": "^2.5.2",
     "lucide-react": "^0.469.0",
     "react": "^18.3.1",
+    "react-countup": "^6.5.3",
     "react-dom": "^18.3.1",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.1.1",
+    "react-tsparticles": "^2.12.2",
     "tailwind-merge": "^2.6.0",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "tsparticles": "^3.7.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.15.0",
