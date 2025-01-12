@@ -26,9 +26,8 @@ const Login = () => {
       localStorage.setItem('isUserLogin', 'true');
 
       await signInWithEmailAndPassword(auth, email || "", String(pass));
-
-
       navigate('/home');
+      
     } catch (error: any) {
       console.error("Login error:", error.message || error);
     }

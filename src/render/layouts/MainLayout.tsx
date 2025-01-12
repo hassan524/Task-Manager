@@ -48,7 +48,7 @@ const MainLayout = () => {
         <SidebarTrigger className="md:hidden" /> 
 
         {/* Main content */}
-        <div className="w-full m-3"> {/* Content starts after header */}
+        <div className="w-full m-5"> {/* Content starts after header */}
           <Outlet />
         </div>
       </SidebarProvider>
