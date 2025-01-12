@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/sidebar";
 import { useState } from "react";
 import "bootstrap-icons/font/bootstrap-icons.css";
+import { NavLink } from "react-router-dom";
 
 export function AppSidebar() {
   const [isCompletedOpen, setIsCompletedOpen] = useState(false);
@@ -22,19 +23,24 @@ export function AppSidebar() {
       </SidebarHeader>
 
       {/* Sidebar Content */}
+
       <SidebarContent className="mt-8">
         <SidebarMenu className="flex flex-col leading-4 font-semibold">
 
-          <SidebarMenuItem className="flex hover:bg-slate-200 items-center px-4 py-3 cursor-pointer">
-            <i className="bi bi-house-gear-fill mr-3"></i>
-            Home
-          </SidebarMenuItem>
+          <NavLink to='home'>
+            <SidebarMenuItem className="flex hover:bg-slate-200 items-center px-4 py-3 cursor-pointer">
+              <i className="bi bi-house-gear-fill mr-3"></i>
+              Home
+            </SidebarMenuItem>
+          </NavLink>
 
           {/* Dashboard */}
-          <SidebarMenuItem className="flex hover:bg-slate-200 items-center px-4 py-3 cursor-pointer">
-            <i className="bi bi-speedometer mr-3"></i>
-            Dashboard
-          </SidebarMenuItem>
+          <NavLink to='dashboard'>
+            <SidebarMenuItem className="flex hover:bg-slate-200 items-center px-4 py-3 cursor-pointer">
+              <i className="bi bi-speedometer mr-3"></i>
+              Dashboard
+            </SidebarMenuItem>
+          </NavLink>
 
           {/* Notifications */}
           <SidebarMenuItem className="flex hover:bg-slate-200 items-center px-4 py-3 cursor-pointer">

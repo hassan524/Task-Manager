@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import { useSelector } from 'react-redux';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from '@/main/firebase';
+import { Separator } from '@/components/ui/separator';
 
 const Home = () => {
   const myData = useSelector((state) => state.user);
@@ -25,6 +24,8 @@ const Home = () => {
           <span className="opacity-50">{identity || ' '}</span>
         </div>
       </div>
+
+      <Separator className='bg-slate-100'/>
 
       {/* Stats Cards Section */}
       <div className="grid lg:grid-cols-4 md:grid-cols-2 gap-4">
@@ -117,7 +118,8 @@ const Home = () => {
           </div>
         </div>
       </div>
-
+      {/* 
+      <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200' width='50' height='50'><circle fill='#3D6CFF' stroke='#3D6CFF' stroke-width='15' r='15' cx='40' cy='100'><animate attributeName='opacity' calcMode='spline' dur='1.3' values='1;0;1;' keySplines='.5 0 .5 1;.5 0 .5 1' repeatCount='indefinite' begin='-.4'></animate></circle><circle fill='#3D6CFF' stroke='#3D6CFF' stroke-width='15' r='15' cx='100' cy='100'><animate attributeName='opacity' calcMode='spline' dur='1.3' values='1;0;1;' keySplines='.5 0 .5 1;.5 0 .5 1' repeatCount='indefinite' begin='-.2'></animate></circle><circle fill='#3D6CFF' stroke='#3D6CFF' stroke-width='15' r='15' cx='160' cy='100'><animate attributeName='opacity' calcMode='spline' dur='1.3' values='1;0;1;' keySplines='.5 0 .5 1;.5 0 .5 1' repeatCount='indefinite' begin='0'></animate></circle></svg> */}
 
     </div>
   );
