@@ -9,13 +9,14 @@ import Sign from './render/Pages/sign';
 import MainLayout from './render/layouts/MainLayout';
 import Home from './render/Pages/Home';
 import DashBoard from './render/Pages/Dashboard';
+import { MyProvider } from './contexts/context';
 
 
 AOS.init();
 
 const App = () => {
   return (
-    // <MyProvider>  {/* Wrap Routes with MyProvider */} 
+    <MyProvider>  {/* Wrap Routes with MyProvider */} 
     <Routes>
       {/* Start Routes */}
       <Route path="/" element={<StartLayout />}>
@@ -31,7 +32,7 @@ const App = () => {
       </Route>
     </Routes>
 
-    // </MyProvider> 
+    </MyProvider> 
   );
 };
 

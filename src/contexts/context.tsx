@@ -1,17 +1,13 @@
 import React, { createContext, useState } from 'react';
 
-interface MyContextType {
-  openSidebar: boolean;
-  setOpenSidebar: React.Dispatch<React.SetStateAction<boolean>>;
-}
 
 const MyContext = createContext<MyContextType | undefined>(undefined);
 
 export const MyProvider = ({ children }: { children: React.ReactNode }) => {
-  const [openSidebar, setOpenSidebar] = useState(false);
+  const [IsProjectOpen, setIsProjectOpen] = useState(true);
 
   return (
-    <MyContext.Provider value={{ openSidebar, setOpenSidebar }}>
+    <MyContext.Provider value={{ IsProjectOpen, setIsProjectOpen }}>
       {children}
     </MyContext.Provider>
   );

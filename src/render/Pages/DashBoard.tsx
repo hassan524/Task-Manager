@@ -1,8 +1,14 @@
 import React from 'react';
 import { Separator } from '@/components/ui/separator';
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
+import CreateProject from '@/methods/CreateProject';
+import { useContext } from 'react'
+import MyContext from '@/contexts/context'
+
 
 const DashBoard = () => {
+  const { setIsProjectOpen } = useContext(MyContext)
+
   return (
     <>
       <div className="wrapper flex flex-col gap-10">
@@ -19,18 +25,20 @@ const DashBoard = () => {
 
         {/* Projects Section */}
         <div className="wrapper flex flex-col gap-[3rem]">
-          <div className="pending relative w-full min-h-96 border border-slate-100 rounded-lg bg-white p-4 shadow-md">
-            <div className="flex items-center justify-between border-b border-slate-200 pb-2 mb-4">
+          <div className="pending relative w-full min-h-96 border border-slate-100 rounded-lg bg-white shadow-md">
+            <div className="flex items-center justify-between border-b p-2 border-slate-200">
               <h3 className="font-semibold text-lg text-slate-600">Your Projects</h3>
-              <button className="px-3 py-1 bg-primary text-white text-sm rounded-lg hover:bg-primary/90">
+              <button className="px-3 py-1 bg-primary text-white text-sm rounded-lg hover:bg-primary/90" 
+              onClick={() => setIsProjectOpen(true)}>
                 + Add New
               </button>
             </div>
             <Accordion type="single" collapsible className="flex flex-col gap-4">
+
               <AccordionItem value="project-1">
-                <AccordionTrigger className="flex items-center justify-between w-full p-3 bg-slate-50 border border-slate-100 rounded-md hover:shadow-sm">
+                <AccordionTrigger className="flex items-center justify-between w-full p-3 border border-slate-100 rounded-md hover:shadow-sm">
                   <div className="flex items-center gap-3">
-                    <i className="bi bi-folder text-slate-500 text-xl"></i>
+                    <i className="bi bi-folder text-[#CEE0FF] text-xl"></i>
                     <div>
                       <span className="font-medium text-slate-600 text-sm">
                         Task Manager Application
@@ -69,17 +77,17 @@ const DashBoard = () => {
 
         {/* Tasks Section */}
         <div className="wrapper mt-8 flex flex-col gap-[3rem]">
-          <div className="pending relative w-full min-h-96 border border-slate-100 rounded-lg bg-white p-4 shadow-md">
-            <div className="flex items-center justify-between border-b border-slate-200 pb-2 mb-4">
+          <div className="pending relative w-full min-h-96 border border-slate-100 rounded-lg bg-white shadow-md">
+            <div className="flex items-center justify-between border-b p-2 border-slate-200">
               <h3 className="font-semibold text-lg text-slate-600">Your Tasks</h3>
               <button className="px-3 py-1 bg-primary text-white text-sm rounded-lg hover:bg-primary/90">
                 + Add Task
               </button>
             </div>
             <div className="flex flex-col gap-4">
-              <div className="flex items-center justify-between border border-slate-100 rounded-md p-3 bg-slate-50 hover:shadow-sm">
+              <div className="flex items-center justify-between border border-slate-100 rounded-md p-3 hover:shadow-sm">
                 <div className="flex items-center gap-3">
-                  <i className="bi bi-clipboard text-slate-500 text-xl"></i>
+                  <i className="bi bi-clipboard text-[#D3F4D4] text-xl"></i>
                   <div>
                     <span className="font-medium text-slate-600 text-sm">Fix Bugs in Dashboard</span>
                     <div className="text-xs text-slate-400">Deadline: 15 Jan 2025</div>
@@ -93,17 +101,17 @@ const DashBoard = () => {
 
         {/* Group Tasks Section */}
         <div className="wrapper mt-8 flex flex-col gap-[3rem]">
-          <div className="pending relative w-full min-h-96 border border-slate-100 rounded-lg bg-white p-4 shadow-md">
-            <div className="flex items-center justify-between border-b border-slate-200 pb-2 mb-4">
+          <div className="pending relative w-full min-h-96 border border-slate-100 rounded-lg bg-white shadow-md">
+            <div className="flex items-center justify-between border-b p-2 border-slate-200">
               <h3 className="font-semibold text-lg text-slate-600">Your Group Tasks</h3>
               <button className="px-3 py-1 bg-primary text-white text-sm rounded-lg hover:bg-primary/90">
                 + Add Group Task
               </button>
             </div>
             <div className="flex flex-col gap-4">
-              <div className="flex items-center justify-between border border-slate-100 rounded-md p-3 bg-slate-50 hover:shadow-sm">
+              <div className="flex items-center justify-between border border-slate-100 rounded-md p-3 hover:shadow-sm">
                 <div className="flex items-center gap-3">
-                  <i className="bi bi-people text-slate-500 text-xl"></i>
+                  <i className="bi bi-people text-[#FFC3C5] text-xl"></i>
                   <div>
                     <span className="font-medium text-slate-600 text-sm">Plan Marketing Campaign</span>
                     <div className="text-xs text-slate-400">Due: 20 Jan 2025</div>
@@ -115,6 +123,9 @@ const DashBoard = () => {
           </div>
         </div>
       </div>
+
+
+      <CreateProject />
     </>
   );
 };

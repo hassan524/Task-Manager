@@ -33,7 +33,7 @@ const MainLayout = () => {
           console.error("Error fetching user document:", error);
         }
       } else {
-        navigate("/");
+        navigate("/"); 
       }
     });
 
