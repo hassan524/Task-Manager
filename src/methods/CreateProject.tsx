@@ -3,34 +3,49 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import MyContext from "@/contexts/context";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { doc, setDoc } from "firebase/firestore";
+import { db } from "@/main/firebase";
+import { useSelector } from "react-redux";
+import { getCurrentDate } from "@/utils/date";
 
 const CreateProject = () => {
-  const { IsProjectOpen, setIsProjectOpen } = useContext(MyContext);
+  const { IsProjectOpen, setIsProjectOpen, SetIsProjectCreate } = useContext(MyContext);
   const [projectName, setProjectName] = useState("");
-  const [description, setDescription] = useState("");
   const [deadline, setDeadline] = useState<Date | null>(null);
+  const myData = useSelector((state) => state.user);
 
-  const handleSubmit = () => {
-    console.log({
-      projectName,
-      description,
-      deadline,
-    });
+  const handleSubmit = async () => {
+    try {
+
+      const projectId = Date.now().toString(); // date using as id
+      const currentDate = getCurrentDate();    // actual date
+
+      await setDoc(doc(db, "projects", projectId), {
+        projectName,
+        deadline,
+        Authorid: myData.id,
+        createdAt: currentDate, 
+        id: projectId
+      });
+      
+      SetIsProjectCreate(true)
+    } catch (error) {
+      console.error("Error creating project:", error);
+    }
   };
 
   return (
     <Dialog open={IsProjectOpen} onOpenChange={setIsProjectOpen} className="mx-5">
-     <DialogContent className="sm:max-w-[425px] w-[90vw] p-6 rounded-xl shadow-lg bg-white">
-
+      <DialogContent className="sm:max-w-[425px] w-[90vw] p-6 rounded-xl shadow-lg bg-white">
         <DialogHeader className="text-center">
           <DialogTitle className="text-xl font-semibold text-gray-800">
             Create a New Project
@@ -40,12 +55,12 @@ const CreateProject = () => {
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-6">
-          {/* Project Name */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Project Name
             </label>
             <Input
+              required
               type="text"
               placeholder="Enter project name"
               value={projectName}
@@ -53,8 +68,6 @@ const CreateProject = () => {
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
-
-          {/* Deadline */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Deadline
@@ -70,8 +83,6 @@ const CreateProject = () => {
             />
           </div>
         </div>
-
-        {/* Footer */}
         <DialogFooter className="mt-6 flex justify-end space-x-2">
           <Button
             variant="outline"

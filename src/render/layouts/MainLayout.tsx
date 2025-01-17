@@ -17,13 +17,20 @@ const MainLayout = () => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         try {
-          const docRef = doc(db, "users", firebaseUser.uid);
+          const userUID = firebaseUser.uid; // Get the user's UID
+          console.log("User UID:", userUID);
+
+          // Fetch user data from Firestore
+          const docRef = doc(db, "users", userUID);
           const docSnap = await getDoc(docRef);
+
           if (docSnap.exists()) {
+            // Dispatch the user data to Redux
             dispatch(
               setUser({
                 name: docSnap.data().name,
                 email: docSnap.data().email,
+                id: userUID
               })
             );
           } else {
@@ -33,26 +40,25 @@ const MainLayout = () => {
           console.error("Error fetching user document:", error);
         }
       } else {
-        navigate("/"); 
+        navigate("/"); // Redirect to login if not authenticated
       }
     });
 
-    return () => unsubscribe();
+    return () => unsubscribe(); // Cleanup on component unmount
   }, [dispatch, navigate]);
 
   return (
     <>
       <Header /> {/* Fixed header */}
-      <SidebarProvider >
+      <SidebarProvider>
         <AppSidebar />
-        <SidebarTrigger className="md:hidden" /> 
+        <SidebarTrigger className="md:hidden" />
 
         {/* Main content */}
         <div className="w-full m-5"> {/* Content starts after header */}
           <Outlet />
         </div>
       </SidebarProvider>
-
     </>
   );
 };
