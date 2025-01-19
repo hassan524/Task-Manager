@@ -30,11 +30,13 @@ const CreateProject = () => {
       const currentDate = getCurrentDate();    // actual date
 
       await setDoc(doc(db, "projects", projectId), {
+        IsCompleted: false,
         projectName,
         deadline,
         Authorid: myData.id,
         createdAt: currentDate, 
-        id: projectId
+        id: projectId,
+        type: 'project'
       });
       
       SetIsProjectCreate(true)

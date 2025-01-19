@@ -31,14 +31,17 @@ const CreateGroupTask = ({ GroupOfProject }) => {
 
       const collectionName = GroupOfProject ? "GroupOfProject" : "Groups";
       const documentId = GroupId;
+      const type = GroupOfProject ? 'GroupOfProject' : 'Groups'
 
       await setDoc(doc(db, collectionName, documentId), {
+        IsCompleted: false,
         GroupName,
         deadline,
         Authorid: myData.id,
         createdAt: currentDate,
         id: documentId,
         ProjectId: GroupOfProject?.id || null, // Reference to the parent project
+        type,
       });
 
       SetIsGroupProjectCreate(true);

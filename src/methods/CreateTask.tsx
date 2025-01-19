@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -17,36 +17,42 @@ import { getCurrentDate } from "@/utils/date";
 import { db } from "@/main/firebase";
 import { doc, setDoc, Timestamp } from "firebase/firestore";
 
-const CreateTask = ({GroupOfTask}) => {
+const CreateTask = ({ GroupOfTask, GroupOfTask2 }) => {
   const { IsTaskOpen, setIsTaskOpen, SetIsTaskCreate } = useContext(MyContext);
   const [TaskName, setTaskName] = useState("");
   const [deadline, setDeadline] = useState<Date | null>(null);
 
   const myData = useSelector((state) => state.user);
 
-    const handleSubmit = async () => {
-      try {
-        const taskId = Date.now().toString(); 
-        const currentDate = getCurrentDate(); 
-  
-        const collectionName = GroupOfTask ? "TasksOfGroupProjects" : "Tasks";
-        const documentId = taskId;
-  
-        await setDoc(doc(db, collectionName, documentId), {
-          TaskName,
-          deadline,
-          Authorid: myData.id,
-          createdAt: currentDate,
-          id: documentId,
-          ProjectId: GroupOfTask?.id || null, 
-        });
-  
-        SetIsTaskCreate(true);
-        setIsTaskOpen(false);
-      } catch (error) {
-        console.error("Error creating task:", error);
-      }
-    };
+  const handleSubmit = async () => {
+    try {
+      const taskId = Date.now().toString();
+      const currentDate = getCurrentDate();
+      const collectionName = GroupOfTask
+        ? "TasksOfGroupProjects"
+        : GroupOfTask2
+        ? "GroupOfTask2"
+        : "Tasks";
+
+      const documentId = taskId;
+
+      await setDoc(doc(db, collectionName, documentId), {
+        IsCompleted: false,
+        TaskName,
+        deadline: deadline ? Timestamp.fromDate(deadline) : null,
+        Authorid: myData.id,
+        createdAt: currentDate,
+        id: documentId,
+        ProjectId: GroupOfTask?.id || GroupOfTask2?.id || null,
+        type: 'Tasks'
+      });
+
+      SetIsTaskCreate(true);
+      setIsTaskOpen(false);
+    } catch (error) {
+      console.error("Error creating task:", error);
+    }
+  };
 
   return (
     <Dialog open={IsTaskOpen} onOpenChange={setIsTaskOpen} className="mx-5">
@@ -59,6 +65,7 @@ const CreateTask = ({GroupOfTask}) => {
             Fill in the details below to get started.
           </DialogDescription>
         </DialogHeader>
+
         <div className="space-y-6">
           {/* Task Name */}
           <div>

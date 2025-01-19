@@ -10,6 +10,8 @@ const useFetchData = () => {
     tasks: [],
     GroupsOfProjects: [],
     TasksOfGroupsProject: [],
+    groupTasks2: [],
+
   });
 
   useEffect(() => {
@@ -32,6 +34,13 @@ const useFetchData = () => {
       }));
     });
 
+    const unsubscribeTasksOfGroup = onSnapshot(collection(db, "GroupOfTask2"), (snapshot) => {
+      setData((prev) => ({
+        ...prev,
+        groupTasks2: snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })),
+      }));
+    });
+
     const unsubscribeTasksOfGroupsProject = onSnapshot(
       collection(db, "TasksOfGroupProjects"),
       (snapshot) => {
@@ -48,6 +57,7 @@ const useFetchData = () => {
       unsubscribeTasks();
       unsubscribeGroupsOfProjects();
       unsubscribeTasksOfGroupsProject();
+      unsubscribeTasksOfGroup()
     };
   }, []);
 

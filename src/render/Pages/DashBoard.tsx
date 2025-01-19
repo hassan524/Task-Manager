@@ -19,6 +19,7 @@ import CreateTask from "@/methods/CreateTask";
 import { useSelector } from "react-redux";
 import ManageProject from "@/methods/popups/ManageProject";
 import useFetchData from "@/hooks/fetch-hook";
+import ManageGroup from "@/methods/popups/ManageGroup";
 
 const DashBoard = () => {
   const {
@@ -28,6 +29,8 @@ const DashBoard = () => {
     setIsTaskOpen,
     IsTaskOpen,
     SetIsManageProject,
+    deleteDocument,
+     SetIsManageGroup
   } = useContext(MyContext);
 
   const [projects, setProjects] = useState([]);
@@ -36,32 +39,51 @@ const DashBoard = () => {
 
   const [GroupsOfProjects, SetGroupsOfProjects] = useState([]);
   const [TasksOfGroupsProject, SetTasksOfGroupsProject] = useState([]);
+  const [Tasks2, SetTasks2] = useState([]);
 
   const [selectedProject, setSelectedProject] = useState(null);
+  const [SelectedGroup, SetSelectedGroup] = useState(null)
+
   const [SelectProjectForChildGroup, setSelectProjectForChildGroup] = useState(null);
   const [SelectTaskForChildGroupProject, setSelectTaskForChildGroupProject] = useState(null);
+  const [SelectTaskForChildGroup, setSelectTaskForChildGroup] = useState(null);
 
   const myData = useSelector((state) => state.user);
 
-  const { projects: fetchedProjects, groupTasks: fetchedGroupTasks, tasks: fetchedTasks, GroupsOfProjects: fetchedGroups, TasksOfGroupsProject: fetchedTasksGroups } = useFetchData();
+  const {
+    projects: fetchedProjects,
+    groupTasks: fetchedGroupTasks,
+    tasks: fetchedTasks,
+    GroupsOfProjects: fetchedGroups,
+    TasksOfGroupsProject: fetchedTasksGroups,
+    groupTasks2: tasks2,
+  } = useFetchData();
+
 
   useEffect(() => {
-    setProjects(fetchedProjects);
-    setGroupTasks(fetchedGroupTasks);
-    setTasks(fetchedTasks);
-    SetGroupsOfProjects(fetchedGroups);
-    SetTasksOfGroupsProject(fetchedTasksGroups);
-  }, [fetchedProjects, fetchedGroupTasks, fetchedTasks, fetchedGroups, fetchedTasksGroups]);
+    setProjects(fetchedProjects || []);
+    setGroupTasks(fetchedGroupTasks || []);
+    setTasks(fetchedTasks || []);
+    SetGroupsOfProjects(fetchedGroups || []);
+    SetTasksOfGroupsProject(fetchedTasksGroups || []);
+    SetTasks2(tasks2 || []);
+  }, [
+    fetchedProjects,
+    fetchedGroupTasks,
+    fetchedTasks,
+    fetchedGroups,
+    fetchedTasksGroups,
+    tasks2,
+  ]);
 
   useEffect(() => {
-    if (!IsGroupTaskOpen) {
-      setSelectProjectForChildGroup(null);
-    }
+    if (!IsGroupTaskOpen) setSelectProjectForChildGroup(null);
   }, [IsGroupTaskOpen]);
 
   useEffect(() => {
     if (!IsTaskOpen) {
       setSelectTaskForChildGroupProject(null);
+      setSelectTaskForChildGroup(null);
     }
   }, [IsTaskOpen]);
 
@@ -70,10 +92,20 @@ const DashBoard = () => {
     setIsGroupTaskOpen(true);
   };
 
-  const HandleChildTaskOfGroupProject = (group) => {
+  const handleChildTaskOfGroupProject = (group) => {
     setSelectTaskForChildGroupProject(group);
     setIsTaskOpen(true);
   };
+
+  const handleChildTaskOfGroup = (group2) => {
+    setSelectTaskForChildGroup(group2);
+    setIsTaskOpen(true);
+  };
+
+  const handleDelete = (type) => {
+    deleteDocument(type);
+  };
+
 
   return (
     <div className="wrapper flex flex-col gap-10">
@@ -86,6 +118,7 @@ const DashBoard = () => {
 
       <Separator className="bg-slate-100" />
 
+      {/* Projects Section */}
       <div className="wrapper flex flex-col gap-[3rem]">
         <div className="relative w-full min-h-96 border border-slate-100 rounded-lg bg-white shadow-md">
           <div className="flex items-center justify-between border-b p-2 border-slate-200">
@@ -97,7 +130,7 @@ const DashBoard = () => {
               + Add New
             </button>
           </div>
-          <Accordion type="single" collapsible className="flex flex-col">
+          <Accordion type="single" collapsible>
             {projects.map((project, index) => (
               <AccordionItem key={index} value={`project-${index}`}>
                 <AccordionTrigger className="flex items-center justify-between w-full p-3 border border-slate-100 rounded-md hover:shadow-sm">
@@ -111,7 +144,7 @@ const DashBoard = () => {
                     <DropdownMenuTrigger asChild>
                       <button className="bi bi-three-dots-vertical text-slate-400 focus:outline-none" />
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" sideOffset={5} className="w-48">
+                    <DropdownMenuContent align="end" sideOffset={5}>
                       <DropdownMenuItem
                         onClick={() => {
                           setSelectedProject(project);
@@ -120,13 +153,14 @@ const DashBoard = () => {
                       >
                         Manage Project
                       </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => handleChildGroupTask(project)}
-                      >
+                      <DropdownMenuItem onClick={() => handleChildGroupTask(project)}>
                         Create Group
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => setIsTaskOpen(true)}>
                         Create Task
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleDelete(project)}>
+                        Delete Task
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -149,8 +183,11 @@ const DashBoard = () => {
                                   <button className="bi bi-three-dots-vertical text-slate-400 focus:outline-none" />
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end" sideOffset={5} className="w-48">
-                                  <DropdownMenuItem onClick={() => HandleChildTaskOfGroupProject(group)}>
+                                  <DropdownMenuItem onClick={() => handleChildTaskOfGroupProject(group)}>
                                     Create Task
+                                  </DropdownMenuItem>
+                                      <DropdownMenuItem onClick={() => handleDelete(group)}>
+                                    delete Task
                                   </DropdownMenuItem>
                                 </DropdownMenuContent>
                               </DropdownMenu>
@@ -194,6 +231,7 @@ const DashBoard = () => {
         </div>
       </div>
 
+      {/* Group Tasks Section */}
       <div className="wrapper flex flex-col gap-[3rem]">
         <div className="relative w-full min-h-96 border border-slate-100 rounded-lg bg-white shadow-md">
           <div className="flex items-center justify-between border-b p-2 border-slate-200">
@@ -205,7 +243,7 @@ const DashBoard = () => {
               + Add Group Task
             </button>
           </div>
-          <Accordion type="single" collapsible className="flex flex-col">
+          <Accordion type="single" collapsible>
             {groupTasks.map((groupTask, index) => (
               <AccordionItem key={index} value={`groupTask-${index}`}>
                 <AccordionTrigger className="flex items-center justify-between w-full p-3 border border-slate-100 rounded-md hover:shadow-sm">
@@ -220,12 +258,45 @@ const DashBoard = () => {
                       <button className="bi bi-three-dots-vertical text-slate-400 focus:outline-none" />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" sideOffset={5} className="w-48">
-                      <DropdownMenuItem>Create Task</DropdownMenuItem>
+                    <DropdownMenuItem
+                        onClick={() => {
+                        SetIsManageGroup(true)
+                        SetSelectedGroup(groupTask)
+                      }}>
+                        Manage Group
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleChildTaskOfGroup(groupTask)}>Create Task</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleDelete(groupTask)}>
+                        Delete Task
+                      </DropdownMenuItem>
+                      <DropdownMenuItem >
+                        Manage Group
+                      </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </AccordionTrigger>
                 <AccordionContent>
-                  <div className="">No additional content available</div>
+                  {tasks2.filter((task2) => task2.ProjectId === groupTask.id).length > 0 ? (
+                    tasks2.filter((task) => task.ProjectId === groupTask.id).map(
+                      (task2, taskIndex) => (
+                        <div
+                          key={taskIndex}
+                          className="flex items-center bg-slate-100 justify-between w-full p-2 border border-slate-200 rounded-md hover:shadow-sm"
+                        >
+                          <div className="flex items-center gap-2">
+                            <i className="bi bi-folder2-open text-[#E0FFCE] text-lg"></i>
+                            <span className="text-sm font-medium text-slate-600">
+                              {task2.TaskName}
+                            </span>
+                          </div>
+                        </div>
+                      )
+                    )
+                  ) : (
+                    <div className="text-center text-sm text-slate-500 py-2">
+                      No Tasks Found
+                    </div>
+                  )}
                 </AccordionContent>
               </AccordionItem>
             ))}
@@ -233,6 +304,7 @@ const DashBoard = () => {
         </div>
       </div>
 
+      {/* Tasks Section */}
       <div className="wrapper flex flex-col gap-[3rem]">
         <div className="relative w-full min-h-96 border border-slate-100 rounded-lg bg-white shadow-md">
           <div className="flex items-center justify-between border-b p-2 border-slate-200">
@@ -244,19 +316,24 @@ const DashBoard = () => {
               + Add Task
             </button>
           </div>
-          <Accordion type="single" collapsible className="flex flex-col">
+          <Accordion type="single" collapsible>
             {tasks.map((task, index) => (
               <AccordionItem key={index} value={`task-${index}`}>
                 <AccordionTrigger className="flex items-center justify-between w-full p-3 border border-slate-100 rounded-md hover:shadow-sm">
                   <div className="flex items-center gap-3">
-                    <i className="bi bi-file-earmark-text text-[#FFD700] text-xl"></i>
-                    <span className="font-medium text-slate-600 text-sm">
-                      {task.taskName}
-                    </span>
+                    <i className="bi bi-check-circle text-[#CEFFCE] text-xl"></i>
+                    <span className="font-medium text-slate-600 text-sm">{task.TaskName}</span>
                   </div>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button className="bi bi-three-dots-vertical text-slate-400 focus:outline-none" />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" sideOffset={5} className="w-48">
+                      <DropdownMenuItem onClick={() => handleDelete(task)}>Delete Task</DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </AccordionTrigger>
                 <AccordionContent>
-                  <p className="text-sm text-slate-400">{task.description}</p>
                 </AccordionContent>
               </AccordionItem>
             ))}
@@ -264,10 +341,15 @@ const DashBoard = () => {
         </div>
       </div>
 
+      {/* Modal Components */}
       <CreateProject />
       <CreateGroupTask GroupOfProject={SelectProjectForChildGroup} />
-      <CreateTask GroupOfTask={SelectTaskForChildGroupProject} />
+      <CreateTask
+        GroupOfTask2={SelectTaskForChildGroup}
+        GroupOfTask={SelectTaskForChildGroupProject}
+      />
       {selectedProject && <ManageProject project={selectedProject} />}
+      {SelectedGroup && <ManageGroup group={SelectedGroup} />} 
     </div>
   );
 };
