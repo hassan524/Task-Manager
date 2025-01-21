@@ -67,18 +67,24 @@ export function AppSidebar() {
             {/* Completed (Children) */}
             {isCompletedOpen && (
               <div className="pl-8 text-sm">
-                <SidebarMenuItem className="flex hover:bg-slate-100 items-center px-4 py-2 cursor-pointer">
-                  <i className="bi bi-check2-all mr-2"></i>
-                  Completed Tasks
-                </SidebarMenuItem>
-                <SidebarMenuItem className="flex hover:bg-slate-100 items-center px-4 py-2 cursor-pointer">
-                  <i className="bi bi-people-fill mr-2"></i>
-                  Completed Group Tasks
-                </SidebarMenuItem>
-                <SidebarMenuItem className="flex hover:bg-slate-100 items-center px-4 py-2 cursor-pointer">
-                  <i className="bi bi-briefcase-fill mr-2"></i>
-                  Completed Projects
-                </SidebarMenuItem>
+                <NavLink to='CompletedTask'>
+                  <SidebarMenuItem className="flex hover:bg-slate-100 items-center px-4 py-2 cursor-pointer">
+                    <i className="bi bi-check2-all mr-2"></i>
+                    Completed Tasks
+                  </SidebarMenuItem>
+                </NavLink>
+                <NavLink to='CompletedGroupTask'>
+                  <SidebarMenuItem className="flex hover:bg-slate-100 items-center px-4 py-2 cursor-pointer">
+                    <i className="bi bi-people-fill mr-2"></i>
+                    Completed Group Tasks
+                  </SidebarMenuItem>
+                </NavLink>
+                <NavLink to='CompletedProject'>
+                  <SidebarMenuItem className="flex hover:bg-slate-100 items-center px-4 py-2 cursor-pointer">
+                    <i className="bi bi-briefcase-fill mr-2"></i>
+                    Completed Projects
+                  </SidebarMenuItem>
+                </NavLink>
               </div>
             )}
           </div>

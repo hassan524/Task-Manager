@@ -20,6 +20,7 @@ import { useSelector } from "react-redux";
 import ManageProject from "@/methods/popups/ManageProject";
 import useFetchData from "@/hooks/fetch-hook";
 import ManageGroup from "@/methods/popups/ManageGroup";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const DashBoard = () => {
   const {
@@ -30,7 +31,8 @@ const DashBoard = () => {
     IsTaskOpen,
     SetIsManageProject,
     deleteDocument,
-     SetIsManageGroup
+    SetIsManageGroup,
+    Complete,
   } = useContext(MyContext);
 
   const [projects, setProjects] = useState([]);
@@ -47,6 +49,8 @@ const DashBoard = () => {
   const [SelectProjectForChildGroup, setSelectProjectForChildGroup] = useState(null);
   const [SelectTaskForChildGroupProject, setSelectTaskForChildGroupProject] = useState(null);
   const [SelectTaskForChildGroup, setSelectTaskForChildGroup] = useState(null);
+
+  // const [IsTaskComplete, SetIsTaskComplete] = useState(false) 
 
   const myData = useSelector((state) => state.user);
 
@@ -106,6 +110,10 @@ const DashBoard = () => {
     deleteDocument(type);
   };
 
+  const handleComplete = (type) => {
+    Complete(type)
+  }
+
 
   return (
     <div className="wrapper flex flex-col gap-10">
@@ -135,6 +143,11 @@ const DashBoard = () => {
               <AccordionItem key={index} value={`project-${index}`}>
                 <AccordionTrigger className="flex items-center justify-between w-full p-3 border border-slate-100 rounded-md hover:shadow-sm">
                   <div className="flex items-center gap-3">
+                    <Checkbox
+                      onClick={() =>
+                        handleComplete(project)
+                      } checked={project.IsCompleted}
+                    />
                     <i className="bi bi-folder text-[#CEE0FF] text-xl"></i>
                     <span className="font-medium text-slate-600 text-sm">
                       {project.projectName}
@@ -173,6 +186,11 @@ const DashBoard = () => {
                           <AccordionItem value={`group-${groupIndex}`}>
                             <AccordionTrigger className="flex items-center justify-between w-full p-2 border border-slate-200 rounded-md hover:shadow-sm">
                               <div className="flex items-center gap-2">
+                                <Checkbox
+                                  onClick={() =>
+                                    handleComplete(group)
+                                  } checked={group.IsCompleted}
+                                />
                                 <i className="bi bi-folder2-open text-[#E0FFCE] text-lg"></i>
                                 <span className="text-sm font-medium text-slate-600">
                                   {group.GroupName}
@@ -186,7 +204,7 @@ const DashBoard = () => {
                                   <DropdownMenuItem onClick={() => handleChildTaskOfGroupProject(group)}>
                                     Create Task
                                   </DropdownMenuItem>
-                                      <DropdownMenuItem onClick={() => handleDelete(group)}>
+                                  <DropdownMenuItem onClick={() => handleDelete(group)}>
                                     delete Task
                                   </DropdownMenuItem>
                                 </DropdownMenuContent>
@@ -201,6 +219,12 @@ const DashBoard = () => {
                                       className="flex items-center bg-slate-100 justify-between w-full p-2 border border-slate-200 rounded-md hover:shadow-sm"
                                     >
                                       <div className="flex items-center gap-2">
+                                        <Checkbox
+                                          // checked={isChecked} 
+                                          onClick={() =>
+                                            handleComplete(task)
+                                          } checked={task.IsCompleted}
+                                        />
                                         <i className="bi bi-folder2-open text-[#E0FFCE] text-lg"></i>
                                         <span className="text-sm font-medium text-slate-600">
                                           {task.TaskName}
@@ -248,6 +272,13 @@ const DashBoard = () => {
               <AccordionItem key={index} value={`groupTask-${index}`}>
                 <AccordionTrigger className="flex items-center justify-between w-full p-3 border border-slate-100 rounded-md hover:shadow-sm">
                   <div className="flex items-center gap-3">
+                    <Checkbox
+                      onClick={() =>
+                        handleComplete(groupTask)
+                      }
+                      checked={groupTask.IsCompleted}
+
+                    />
                     <i className="bi bi-folder2-open text-[#E0FFCE] text-xl"></i>
                     <span className="font-medium text-slate-600 text-sm">
                       {groupTask.GroupName}
@@ -258,11 +289,11 @@ const DashBoard = () => {
                       <button className="bi bi-three-dots-vertical text-slate-400 focus:outline-none" />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" sideOffset={5} className="w-48">
-                    <DropdownMenuItem
+                      <DropdownMenuItem
                         onClick={() => {
-                        SetIsManageGroup(true)
-                        SetSelectedGroup(groupTask)
-                      }}>
+                          SetIsManageGroup(true)
+                          SetSelectedGroup(groupTask)
+                        }}>
                         Manage Group
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => handleChildTaskOfGroup(groupTask)}>Create Task</DropdownMenuItem>
@@ -284,6 +315,10 @@ const DashBoard = () => {
                           className="flex items-center bg-slate-100 justify-between w-full p-2 border border-slate-200 rounded-md hover:shadow-sm"
                         >
                           <div className="flex items-center gap-2">
+                            <Checkbox
+                              checked={task2.IsCompleted}
+                              onClick={() => handleComplete(task2)}
+                            />
                             <i className="bi bi-folder2-open text-[#E0FFCE] text-lg"></i>
                             <span className="text-sm font-medium text-slate-600">
                               {task2.TaskName}
@@ -321,7 +356,11 @@ const DashBoard = () => {
               <AccordionItem key={index} value={`task-${index}`}>
                 <AccordionTrigger className="flex items-center justify-between w-full p-3 border border-slate-100 rounded-md hover:shadow-sm">
                   <div className="flex items-center gap-3">
-                    <i className="bi bi-check-circle text-[#CEFFCE] text-xl"></i>
+                    <Checkbox
+                      checked={task.IsCompleted}
+                      onClick={() => handleComplete(task)}
+                    />
+                    {/* <i className="bi bi-check-circle text-[#CEFFCE] text-xl"></i>  */}
                     <span className="font-medium text-slate-600 text-sm">{task.TaskName}</span>
                   </div>
                   <DropdownMenu>
@@ -349,7 +388,7 @@ const DashBoard = () => {
         GroupOfTask={SelectTaskForChildGroupProject}
       />
       {selectedProject && <ManageProject project={selectedProject} />}
-      {SelectedGroup && <ManageGroup group={SelectedGroup} />} 
+      {SelectedGroup && <ManageGroup group={SelectedGroup} />}
     </div>
   );
 };

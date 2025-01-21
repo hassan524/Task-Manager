@@ -31,8 +31,8 @@ const CreateTask = ({ GroupOfTask, GroupOfTask2 }) => {
       const collectionName = GroupOfTask
         ? "TasksOfGroupProjects"
         : GroupOfTask2
-        ? "GroupOfTask2"
-        : "Tasks";
+          ? "GroupOfTask2"
+          : "Tasks";
 
       const documentId = taskId;
 
@@ -44,9 +44,10 @@ const CreateTask = ({ GroupOfTask, GroupOfTask2 }) => {
         createdAt: currentDate,
         id: documentId,
         ProjectId: GroupOfTask?.id || GroupOfTask2?.id || null,
-        type: 'Tasks'
+        type: GroupOfTask2
+          ? 'GroupOfTask2'
+          : (GroupOfTask ? 'TasksOfGroupProjects' : 'Task')
       });
-
       SetIsTaskCreate(true);
       setIsTaskOpen(false);
     } catch (error) {

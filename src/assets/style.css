@@ -12,3 +12,6 @@ html, body {
 .pending {
   scrollbar-width: none;
 }
+.text-area{
+  scrollbar-width: none;
+}

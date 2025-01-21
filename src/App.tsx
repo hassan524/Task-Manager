@@ -10,29 +10,35 @@ import MainLayout from './render/layouts/MainLayout';
 import Home from './render/Pages/Home';
 import DashBoard from './render/Pages/Dashboard';
 import { MyProvider } from './contexts/context';
-
+import CompletedGroup from './render/Pages/CompletedGroup';
+import CompletedProject from './render/Pages/CompletedProject';
+import CompletedTask from './render/Pages/CompletedTask';
 
 AOS.init();
 
 const App = () => {
   return (
-    <MyProvider>  {/* Wrap Routes with MyProvider */} 
-    <Routes>
-      {/* Start Routes */}
-      <Route path="/" element={<StartLayout />}>
-        <Route index element={<GetStart />} />
-        <Route path="login" element={<Login />} />
-        <Route path="sign" element={<Sign />} />
-      </Route>
+    <MyProvider> 
+      <Routes>
+        {/* Start Routes */}
+        <Route path="/" element={<StartLayout />}>
+          <Route index element={<GetStart />} />
+          <Route path="login" element={<Login />} />
+          <Route path="sign" element={<Sign />} />
+        </Route>
 
-      {/* Main Routes */}
-      <Route element={<MainLayout />}>
-        <Route path="home" element={<Home />} />
-        <Route path="dashboard" element={<DashBoard />} />
-      </Route>
-    </Routes>
+        {/* Main Routes */}
+        <Route element={<MainLayout />}>
+          <Route path="home" element={<Home />} />
+          <Route path="dashboard" element={<DashBoard />} />
 
-    </MyProvider> 
+          <Route path="CompletedTask" element={<CompletedTask />} />
+          <Route path="CompletedGroupTask" element={<CompletedGroup />} />
+          <Route path="CompletedProject" element={<CompletedProject />} />
+        </Route>
+      </Routes>
+
+    </MyProvider>
   );
 };
 
