@@ -23,21 +23,17 @@ import { useSelector } from "react-redux";
 const CreateNote = () => {
   const { IsNoteOepn, setIsNoteOpen } = useContext(MyContext);
   const [noteType, setNoteType] = useState("");
-  const [noteTitle, setNoteTitle] = useState("");
 
   const myData = useSelector((state) => state.user);
 
   const handleNote = async () => {
     try {
-      if (noteType === "Text" && !noteTitle.trim()) {
-        alert("Please provide a title for your note.");
-        return;
-      }
 
       // Add note to Firestore
       await addDoc(collection(db, "Notes"), {
         type: noteType,
-        title: noteType === "Text" ? noteTitle : null, 
+        title: null,
+        text: null,
         createdAt: new Date(),
         Authorid: myData.id,
       });
@@ -86,8 +82,6 @@ const CreateNote = () => {
                 type="text"
                 placeholder="Enter note title"
                 className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                value={noteTitle}
-                onChange={(e) => setNoteTitle(e.target.value)}
               />
             </div>
           )}

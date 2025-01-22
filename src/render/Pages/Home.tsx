@@ -7,18 +7,29 @@ import useFetchPending from '@/hooks/fetch-pending';
 import CreateNote from '@/methods/CreateNote';
 import MyContext from '@/contexts/context';
 import { db } from '@/main/firebase';
-import { doc, setDoc, onSnapshot } from 'firebase/firestore';
+import { doc, setDoc, query, collection, where, onSnapshot } from 'firebase/firestore';
 import CreateTodo from '@/methods/CreateTodo';
+import fetchTodos from '@/hooks/fetch-todos';
+import fetchNotes from "@/hooks/fetch-Notes";
 
 const Home = () => {
   const [title, setTitle] = useState('');
   const [text, setText] = useState('');
+  const [Title2, setTitle2] = useState('');
+  const [Text2, setText2] = useState('');
+  const [Notes, SetNotes] = useState([]);
+  const [SelectNoteForTodo, SetSelectNoteForTodo] = useState(null);
+  console.log(SelectNoteForTodo)
+
   const myData = useSelector((state) => state.user);
   const [identity, setIdentity] = useState<string | number | null>(null);
   const { setIsNoteOpen, IsTodoOpen, SetIsTodoOpen } = useContext(MyContext);
   const { pendingProjects, pendingGroups, pendingTasks } = useFetchPending();
   const { completedProjects, OnGoingProjects, completedGroups, completedTasks } = useFetchComplete();
-  const [IsSetting]
+  const [IsSetDefaultTodo, SetIsDefaultTodo] = useState(false);
+
+  const todos = fetchTodos();
+  const notes = fetchNotes();
 
   useEffect(() => {
     if (myData?.name) setIdentity(myData.name.charAt(0));
@@ -39,12 +50,47 @@ const Home = () => {
     return () => unsubscribe();
   }, [myData?.id]);
 
+  useEffect(() => {
+    if (!myData?.id) return;
+
+    const notesQuery = query(
+      collection(db, 'Notes'),
+      where('Authorid', '==', myData.id)
+    );
+
+    const unsubscribe = onSnapshot(notesQuery, (querySnapshot) => {
+      const fetchedNotes = [];
+      querySnapshot.forEach((doc) => {
+        fetchedNotes.push({ id: doc.id, ...doc.data() });
+      });
+      SetNotes(fetchedNotes);
+    });
+
+    return () => unsubscribe();
+  }, [myData?.id]);
+
+  useEffect(() => {
+    if (!IsTodoOpen && IsSetDefaultTodo) {
+      SetIsDefaultTodo(false);
+    }
+  }, [IsTodoOpen, IsSetDefaultTodo]);
+
+  useEffect(() => {
+    if (!IsTodoOpen && SelectNoteForTodo) {
+      SetSelectNoteForTodo(null);
+    }
+  }, [IsTodoOpen]);
+
   const handleTitleChange = async (e) => {
     const newTitle = e.target.value;
     setTitle(newTitle);
     if (myData?.id) {
-      const noteRef = doc(db, 'defaultNoteText', myData.id);
-      await setDoc(noteRef, { title: newTitle, text }, { merge: true });
+      try {
+        const noteRef = doc(db, 'defaultNoteText', myData.id);
+        await setDoc(noteRef, { title: newTitle, text }, { merge: true });
+      } catch (error) {
+        console.error("Error updating Firestore:", error);
+      }
     }
   };
 
@@ -56,6 +102,34 @@ const Home = () => {
       await setDoc(noteRef, { title, text: newText }, { merge: true });
     }
   };
+
+  const handleTitleChange2 = async (id, e) => {
+    const newText = e.target.value;
+    setTitle2(newText);
+    const noteRef = doc(db, 'Notes', id);
+    await setDoc(noteRef, { title: newText, text: Text2 }, { merge: true });
+  };
+
+  const handleTextChange2 = async (id, e) => {
+    const newText = e.target.value;
+    setText2(newText);
+    const noteRef = doc(db, 'Notes', id);
+    await setDoc(noteRef, { title, text: newText }, { merge: true });
+  };
+
+  const HandleDefaultTodo = () => {
+    SetIsTodoOpen(true);
+    SetIsDefaultTodo(true);
+  };
+
+  const HandleTodoForNote = (note) => {
+    SetSelectNoteForTodo(note);
+    SetIsTodoOpen(true);
+  };
+
+  useEffect(() => {
+    console.log(SelectNoteForTodo);
+  }, [SelectNoteForTodo]);
 
   const gradientColors = [
     { from: '#93C5FD', to: '#E5E7EB' },
@@ -93,41 +167,39 @@ const Home = () => {
         ))}
       </div>
 
-      <div>
-        <div className="flex flex-col gap-6">
-          {[{ title: 'Pending Projects', data: pendingProjects }, { title: 'Pending Group Tasks', data: pendingGroups }, { title: 'Pending Tasks', data: pendingTasks }].map((section, index) => (
+      <div className="flex flex-col gap-6">
+        {[{ title: 'Pending Projects', data: pendingProjects }, { title: 'Pending Group Tasks', data: pendingGroups }, { title: 'Pending Tasks', data: pendingTasks }].map((section, index) => (
+          <div
+            key={index}
+            className="relative h-[40vh] max-h-[60vh] w-full rounded-2xl shadow-lg overflow-hidden p-3"
+          >
             <div
-              key={index}
-              className="relative h-[40vh] max-h-[60vh] w-full rounded-2xl shadow-lg overflow-hidden p-3"
+              className="absolute inset-x-0 top-0 h-10 flex items-center px-5"
+              style={{ background: `linear-gradient(90deg, ${gradientColors[index]?.from} 0%, ${gradientColors[index]?.to} 100%)` }}
             >
-              <div
-                className="absolute inset-x-0 top-0 h-10 flex items-center px-5"
-                style={{ background: `linear-gradient(90deg, ${gradientColors[index]?.from} 0%, ${gradientColors[index]?.to} 100%)` }}
-              >
-                <span className="text-white font-medium">{section.title}</span>
-              </div>
-              <div className="mt-10 flex flex-col gap-4 overflow-y-auto">
-                {section.data.length > 0 ? (
-                  section.data.map((item, idx) => (
-                    <div
-                      key={idx}
-                      className="flex items-center justify-between w-full p-4 bg-white border border-gray-200 rounded-md shadow-sm hover:shadow-md"
-                    >
-                      <span className="font-medium text-gray-800">
-                        {item.ProjectName || item.GroupName || item.TaskName}
-                      </span>
-                      <span className="text-sm text-gray-500">{item.DueDate || 'No due date'}</span>
-                    </div>
-                  ))
-                ) : (
-                  <div className="h-full flex items-center justify-center">
-                    <img src="/public/nofound.png" alt={`No ${section.title}`} />
-                  </div>
-                )}
-              </div>
+              <span className="text-white font-medium">{section.title}</span>
             </div>
-          ))}
-        </div>
+            <div className="mt-10 flex flex-col gap-4 overflow-y-auto">
+              {section.data.length > 0 ? (
+                section.data.map((item, idx) => (
+                  <div
+                    key={idx}
+                    className="flex items-center justify-between w-full p-4 bg-white border border-gray-200 rounded-md shadow-sm hover:shadow-md"
+                  >
+                    <span className="font-medium text-gray-800">
+                      {item.ProjectName || item.GroupName || item.TaskName}
+                    </span>
+                    <span className="text-sm text-gray-500">{item.DueDate || 'No due date'}</span>
+                  </div>
+                ))
+              ) : (
+                <div className="h-full flex items-center justify-center">
+                  <img src="/public/nofound.png" alt={`No ${section.title}`} />
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
       </div>
 
       <div className="w-full flex items-center justify-between mt-8">
@@ -145,7 +217,7 @@ const Home = () => {
 
       <div className="grid lg:grid-cols-2 gap-5">
         <div className="w-full h-[42vh] rounded-2xl overflow-hidden bg-gray-50 shadow-lg">
-          <div className="text-area h-[7vh] flex bg-[#CDF5F6] items-center justify-between">
+          <div className="h-[7vh] flex bg-[#CDF5F6] items-center justify-between">
             <input
               className="h-full opacity-95 text-gray-600 tracking-wide px-3 w-[90%] outline-none bg-transparent"
               type="text"
@@ -166,16 +238,66 @@ const Home = () => {
 
         <div className="w-full h-[42vh] rounded-2xl overflow-hidden bg-gray-50 shadow-lg">
           <div className="h-[7vh] bg-[#F9EBDF] flex items-center text-gray-600 px-3">
-            <div onClick={() => SetIsTodoOpen(true)} className="flex items-center gap-1">
+            <div onClick={HandleDefaultTodo} className="flex items-center gap-1 cursor-pointer">
               <button>Add Todo</button>
               <i className="bi bi-plus text-xl"></i>
             </div>
           </div>
+          <div className="">
+            {todos.map((todo) => {
+              return <div key={todo.id}>{todo.name}</div>;
+            })}
+          </div>
         </div>
+
+        {Notes.map((note) => (
+          <div className="w-full h-[42vh] rounded-2xl overflow-hidden bg-gray-50 shadow-lg" key={note.id}>
+            <div className="h-[7vh] bg-[#F9EBDF] flex items-center text-gray-600 px-3">
+              {note.type === "Text" ? (
+                <input
+                  className="h-full opacity-95 text-gray-600 tracking-wide px-3 w-[90%] outline-none bg-transparent"
+                  type="text"
+                  placeholder="Title"
+                  onChange={(e) => handleTitleChange2(note.id, e)}
+                  value={note.title}
+                />
+              ) : (
+                <div
+                  onClick={() => HandleTodoForNote(note)}
+                  className="flex items-center gap-1 cursor-pointer"
+                >
+                  <button>Add Todo</button>
+                  <i className="bi bi-plus text-xl"></i>
+                </div>
+              )}
+            </div>
+            {note.type === "Text" ? (
+              <textarea
+                className="text-area w-full outline-none h-[calc(100%-7vh)] resize-none overflow-auto p-3"
+                placeholder="Type your content here..."
+                onFocus={(e) => (e.target.scrollTop = 0)}
+                onChange={(e) => handleTextChange2(note.id, e)}
+                value={note.text}
+              ></textarea>
+            ) : (
+              // Check if note.todos is defined and an array
+              Array.isArray(note.todos) && note.todos.length > 0 ? (
+                note.todos.map((todo) => (
+                  <div key={todo.id} className="">
+                    {todo.name}
+                  </div>
+                ))
+              ) : (
+                <div>No Todos</div>
+              )
+            )}
+          </div>
+        ))}
+
       </div>
 
       <CreateNote />
-      <CreateTodo />
+      <CreateTodo DefaultTodo={IsSetDefaultTodo} NoteForTodo={SelectNoteForTodo} />
     </div>
   );
 };
