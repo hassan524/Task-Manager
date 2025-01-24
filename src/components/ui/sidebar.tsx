@@ -279,7 +279,7 @@ const SidebarTrigger = React.forwardRef<
       }}
       {...props}
     >
-      <PanelLeft className='md:hidden block text-white' />
+      <PanelLeft className='md:hidden block text-gray-300' />
       <div className="md:block hidden text-slate-900">
       <Hamburger
   toggled={isopen}

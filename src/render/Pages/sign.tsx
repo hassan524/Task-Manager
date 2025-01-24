@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { db, auth } from "@/main/firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
+import { toast } from "sonner";
 
 const Sign = () => {
   const [name, setName] = useState<string | null>(null);
@@ -15,6 +16,13 @@ const Sign = () => {
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!name || !email || !pass) {
+      toast.error("Sign-Up Failed", {
+        description: "Please fill in all fields before signing up.",
+      });
+      return;
+    }
 
     try {
       const userCredential = await createUserWithEmailAndPassword(
@@ -29,10 +37,18 @@ const Sign = () => {
         email,
       });
 
-      await localStorage.setItem("isUserRegister", "true");
-      navigate("/login");
-    } catch (error) {
-      console.error("Error signing in:", error);
+      localStorage.setItem("isUserRegister", "true");
+      toast.success("Sign-Up Successful", {
+        description: "Your account has been created. Redirecting to login...",
+      });
+
+      setTimeout(() => navigate("/login"), 1500); // Navigate after a short delay
+    } catch (error: any) {
+      console.error("Error signing up:", error);
+      toast.error("Sign-Up Failed", {
+        description:
+          error.message || "Something went wrong. Please try again later.",
+      });
     }
   };
 

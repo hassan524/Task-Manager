@@ -7,10 +7,11 @@ import useFetchPending from '@/hooks/fetch-pending';
 import CreateNote from '@/methods/CreateNote';
 import MyContext from '@/contexts/context';
 import { db } from '@/main/firebase';
-import { doc, setDoc, query, collection, where, onSnapshot } from 'firebase/firestore';
+import { doc, setDoc, query, collection, where, onSnapshot, deleteDoc } from 'firebase/firestore';
 import CreateTodo from '@/methods/CreateTodo';
 import fetchTodos from '@/hooks/fetch-todos';
 import fetchNotes from "@/hooks/fetch-Notes";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const Home = () => {
   const [title, setTitle] = useState('');
@@ -23,9 +24,9 @@ const Home = () => {
 
   const myData = useSelector((state) => state.user);
   const [identity, setIdentity] = useState<string | number | null>(null);
-  const { setIsNoteOpen, IsTodoOpen, SetIsTodoOpen } = useContext(MyContext);
-  const { pendingProjects, pendingGroups, pendingTasks } = useFetchPending();
-  const { completedProjects, OnGoingProjects, completedGroups, completedTasks } = useFetchComplete();
+  const { setIsNoteOpen, IsTodoOpen, SetIsTodoOpen, DefaultTodoComplete, NotesTodoComplete } = useContext(MyContext);
+  const { pendingProjects = [], pendingGroups = [], pendingTasks = [] } = useFetchPending();
+  const { completedProjects = [], OnGoingProjects = [], completedGroups = [], completedTasks = [] } = useFetchComplete();
   const [IsSetDefaultTodo, SetIsDefaultTodo] = useState(false);
 
   const todos = fetchTodos();
@@ -34,6 +35,8 @@ const Home = () => {
   useEffect(() => {
     if (myData?.name) setIdentity(myData.name.charAt(0));
   }, [myData]);
+
+  console.log(myData.id)
 
   useEffect(() => {
     if (!myData?.id) return;
@@ -131,17 +134,29 @@ const Home = () => {
     console.log(SelectNoteForTodo);
   }, [SelectNoteForTodo]);
 
+  function HandleDefaultTodoComplete(todo) {
+    DefaultTodoComplete(todo)
+  }
+
+  function HandleNotesTodoComplete(todo, docid) {
+    NotesTodoComplete(todo, docid)
+  }
+
+  async function deleteNote(id) {
+    await deleteDoc(doc(db, "Notes", id));
+  }
+
   const gradientColors = [
     { from: '#93C5FD', to: '#E5E7EB' },
     { from: '#D8B4FE', to: '#E5E7EB' },
-    { from: '#FBCFE8', to: '#E5E7EB' },
+    { from: '#CCEEBC', to: '#E5E7EB' },
     { from: '#A7F3D0', to: '#E5E7EB' },
   ];
 
-  const colors = ['#93c5fd', '#d8b4fe', '#fbbf24', '#6ee7b7'];
+  const colors = ['#C4D7FF', '#CDC1FF', '#FFC6C6', '#CCEEBC'];
 
   return (
-    <div className="wrapper flex flex-col gap-10 mt-4">
+    <div className="wrapper flex flex-col gap-10">
       <div className="w-full flex items-center justify-between">
         <div className="flex items-center gap-2">
           <i className="bi bi-houses-fill text-primary text-lg"></i>
@@ -155,7 +170,12 @@ const Home = () => {
       <Separator className="bg-gray-200" />
 
       <div className="grid lg:grid-cols-4 md:grid-cols-2 gap-6">
-        {[{ label: 'Total Completed Projects', count: completedProjects.length }, { label: 'Ongoing Projects', count: OnGoingProjects.length }, { label: 'Completed Group Tasks', count: completedGroups.length }, { label: 'Completed Tasks', count: completedTasks.length }].map((card, index) => (
+        {[
+          { label: 'Total Completed Projects', count: completedProjects?.length || 0 },
+          { label: 'Ongoing Projects', count: OnGoingProjects?.length || 0 },
+          { label: 'Completed Group Tasks', count: completedGroups?.length || 0 },
+          { label: 'Completed Tasks', count: completedTasks?.length || 0 }
+        ].map((card, index) => (
           <div
             key={index}
             className="text-white p-6 rounded-2xl text-center shadow-md hover:shadow-lg transition-all ease-in-out duration-300 transform hover:-translate-y-1"
@@ -167,29 +187,41 @@ const Home = () => {
         ))}
       </div>
 
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-14">
         {[{ title: 'Pending Projects', data: pendingProjects }, { title: 'Pending Group Tasks', data: pendingGroups }, { title: 'Pending Tasks', data: pendingTasks }].map((section, index) => (
-          <div
-            key={index}
-            className="relative h-[40vh] max-h-[60vh] w-full rounded-2xl shadow-lg overflow-hidden p-3"
-          >
+         <div
+         key={index}
+         className="relative h-auto min-h-[50vh] w-full rounded-2xl shadow-lg overflow-hidden"
+       >
+         {/* Content goes here */}
             <div
               className="absolute inset-x-0 top-0 h-10 flex items-center px-5"
               style={{ background: `linear-gradient(90deg, ${gradientColors[index]?.from} 0%, ${gradientColors[index]?.to} 100%)` }}
             >
               <span className="text-white font-medium">{section.title}</span>
             </div>
-            <div className="mt-10 flex flex-col gap-4 overflow-y-auto">
+            <div className="mt-10 flex flex-col overflow-y-auto">
               {section.data.length > 0 ? (
                 section.data.map((item, idx) => (
                   <div
                     key={idx}
-                    className="flex items-center justify-between w-full p-4 bg-white border border-gray-200 rounded-md shadow-sm hover:shadow-md"
+                    className="flex items-center justify-between w-full p-2 bg-white border border-gray-200 shadow-sm hover:shadow-md"
                   >
-                    <span className="font-medium text-gray-800">
-                      {item.ProjectName || item.GroupName || item.TaskName}
-                    </span>
-                    <span className="text-sm text-gray-500">{item.DueDate || 'No due date'}</span>
+                    <div className="flex items-center gap-3">
+                      {item.type === 'project' ? (
+                        <i className="bi bi-folder text-[#93C5FD] text-xl"></i>
+                      ) : item.type === 'Groups' ? (
+                        <i className="bi bi-folder2-open text-[#D8B4FE] text-xl"></i>
+                      ) : item.type === 'Task' ? (
+                        <i className="bi bi-check2-square text-[#CCEEBC] text-xl"></i>
+                      ) : null}
+                      <span className="font-semibold text-gray-800 text-[14px]">
+                        {item.projectName || item.GroupName || item.TaskName}
+                      </span>
+                    </div>
+                    <div className="">
+                      <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200' width='30' height='30'><circle fill='#3D6CFF' stroke='#C4D7FF' strokeWidth='15' r='15' cx='40' cy='100'><animate attributeName='opacity' calcMode='spline' dur='1.3s' values='1;0;1;' keySplines='.5 0 .5 1;.5 0 .5 1' repeatCount='indefinite' begin='-.4s'></animate></circle><circle fill='#3D6CFF' stroke='#3D6CFF' stroke-width='15' r='15' cx='100' cy='100'><animate attributeName='opacity' calcMode='spline' dur='1.3s' values='1;0;1;' keySplines='.5 0 .5 1;.5 0 .5 1' repeatCount='indefinite' begin='-.2s'></animate></circle><circle fill='#3D6CFF' stroke='#3D6CFF' stroke-width='15' r='15' cx='160' cy='100'><animate attributeName='opacity' calcMode='spline' dur='1.3s' values='1;0;1;' keySplines='.5 0 .5 1;.5 0 .5 1' repeatCount='indefinite' begin='0s'></animate></circle></svg>
+                    </div>
                   </div>
                 ))
               ) : (
@@ -216,89 +248,139 @@ const Home = () => {
       </div>
 
       <div className="grid lg:grid-cols-2 gap-5">
-        <div className="w-full h-[42vh] rounded-2xl overflow-hidden bg-gray-50 shadow-lg">
-          <div className="h-[7vh] flex bg-[#CDF5F6] items-center justify-between">
+        {/* Note Taking Section */}
+        <div className="w-full h-[42vh] rounded-2xl overflow-hidden bg-white shadow-md">
+          <div className="h-[7vh] flex bg-[#FCFFC1] items-center px-3">
             <input
-              className="h-full opacity-95 text-gray-600 tracking-wide px-3 w-[90%] outline-none bg-transparent"
+              className="h-full w-full text-gray-700 font-semibold text-lg outline-none bg-transparent placeholder-gray-500"
               type="text"
-              placeholder="Title"
+              placeholder="Enter title here..."
               onChange={handleTitleChange}
               value={title}
             />
           </div>
-
           <textarea
-            className="text-area w-full outline-none h-[calc(100%-7vh)] resize-none overflow-auto p-3"
+            className="text-area w-full outline-none h-[calc(100%-7vh)] resize-none overflow-auto p-3 text-md tracking-wide leading-8 text-gray-500"
             placeholder="Type your content here..."
-            onFocus={(e) => (e.target.scrollTop = 0)}
             onChange={handleTextChange}
             value={text}
           ></textarea>
         </div>
 
-        <div className="w-full h-[42vh] rounded-2xl overflow-hidden bg-gray-50 shadow-lg">
-          <div className="h-[7vh] bg-[#F9EBDF] flex items-center text-gray-600 px-3">
-            <div onClick={HandleDefaultTodo} className="flex items-center gap-1 cursor-pointer">
-              <button>Add Todo</button>
+        {/* Todo Section */}
+        <div className="w-full h-[42vh] rounded-2xl overflow-hidden bg-white shadow-md">
+          <div className="h-[7vh] bg-[#FFE2E2] flex items-center px-3">
+            <button
+              onClick={HandleDefaultTodo}
+              className="flex items-center gap-2 text-gray-700 font-semibold"
+            >
+              Add Todo
               <i className="bi bi-plus text-xl"></i>
-            </div>
+            </button>
           </div>
-          <div className="">
-            {todos.map((todo) => {
-              return <div key={todo.id}>{todo.name}</div>;
-            })}
+          <div className="p-3 text-gray-700 text-md">
+            {todos.length > 0 ? (
+              todos.map((todo) => (
+                <div key={todo.id} className="py-1 flex items-center gap-2 font-semibold">
+                  <Checkbox checked={todo.IsCompleted} onClick={() => HandleDefaultTodoComplete(todo)} className='text-slate-500 data-[state=checked]:bg-[#C4D7FF]' />
+                  <span>{todo.name}</span>
+                </div>
+              ))
+            ) : (
+              <div className="text-gray-400">No Todos Yet</div>
+            )}
           </div>
         </div>
 
-        {Notes.map((note) => (
-          <div className="w-full h-[42vh] rounded-2xl overflow-hidden bg-gray-50 shadow-lg" key={note.id}>
-            <div className="h-[7vh] bg-[#F9EBDF] flex items-center text-gray-600 px-3">
+        {/* Notes Section */}
+        {/* Notes Section */}
+        {Notes.map((note, index) => (
+          <div
+            className="w-full h-[42vh] rounded-2xl overflow-hidden bg-white shadow-md"
+            key={note.id}
+          >
+            {/* Note Header */}
+            <div
+              className="h-[7vh] flex items-center justify-between px-4"
+              style={{ backgroundColor: colors[index] }}
+            >
               {note.type === "Text" ? (
-                <input
-                  className="h-full opacity-95 text-gray-600 tracking-wide px-3 w-[90%] outline-none bg-transparent"
-                  type="text"
-                  placeholder="Title"
-                  onChange={(e) => handleTitleChange2(note.id, e)}
-                  value={note.title}
-                />
+                <>
+                  <input
+                    className="flex-grow h-full text-gray-700 font-semibold outline-none bg-transparent placeholder-gray-500"
+                    type="text"
+                    placeholder="Enter title here..."
+                    onChange={(e) => handleTitleChange2(note.id, e)}
+                    value={note.title}
+                  />
+                  <button
+                    onClick={() => deleteNote(note.id)}
+                    className="text-white flex-shrink-0"
+                  >
+                    <i className="bi bi-trash text-xl"></i>
+                  </button>
+                </>
               ) : (
-                <div
-                  onClick={() => HandleTodoForNote(note)}
-                  className="flex items-center gap-1 cursor-pointer"
-                >
-                  <button>Add Todo</button>
-                  <i className="bi bi-plus text-xl"></i>
+                <div className="w-full flex items-center justify-between">
+                  <button
+                    onClick={() => HandleTodoForNote(note)}
+                    className="flex items-center gap-2 text-gray-700 font-semibold"
+                  >
+                    Add Todo
+                    <i className="bi bi-plus text-xl"></i>
+                  </button>
+                  <button
+                    onClick={() => deleteNote(note.id)}
+                    className="text-white flex-shrink-0"
+                  >
+                    <i className="bi bi-trash text-xl"></i>
+                  </button>
                 </div>
               )}
             </div>
+
+            {/* Note Content */}
             {note.type === "Text" ? (
               <textarea
-                className="text-area w-full outline-none h-[calc(100%-7vh)] resize-none overflow-auto p-3"
+                className="w-full outline-none h-[calc(100%-7vh)] resize-none p-3 text-md tracking-wide leading-8 text-gray-500"
                 placeholder="Type your content here..."
-                onFocus={(e) => (e.target.scrollTop = 0)}
                 onChange={(e) => handleTextChange2(note.id, e)}
                 value={note.text}
               ></textarea>
-            ) : (
-              // Check if note.todos is defined and an array
-              Array.isArray(note.todos) && note.todos.length > 0 ? (
-                note.todos.map((todo) => (
-                  <div key={todo.id} className="">
-                    {todo.name}
+            ) : note.todos && note.todos.length > 0 ? (
+              <div className="p-3 text-gray-700 text-md space-y-2">
+                {note.todos.map((todo) => (
+                  <div
+                    key={todo.id}
+                    className="flex items-center justify-between py-1"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Checkbox
+                        checked={todo.IsCompleted}
+                        onClick={() => HandleNotesTodoComplete(todo, note.id)}
+                        className="text-slate-500 data-[state=checked]:bg-[#C4D7FF]"
+                      />
+                      <span>{todo.name}</span>
+                    </div>
                   </div>
-                ))
-              ) : (
-                <div>No Todos</div>
-              )
+                ))}
+              </div>
+            ) : (
+              <div className="h-[calc(100%-7vh)] flex items-center justify-center text-gray-300">
+                No Todos Yet
+              </div>
             )}
           </div>
         ))}
 
       </div>
 
+
       <CreateNote />
       <CreateTodo DefaultTodo={IsSetDefaultTodo} NoteForTodo={SelectNoteForTodo} />
-    </div>
+
+
+    </div >
   );
 };
 

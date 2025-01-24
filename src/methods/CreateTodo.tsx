@@ -12,15 +12,12 @@ const CreateTodo = ({ DefaultTodo, NoteForTodo }) => {
   const { IsTodoOpen, SetIsTodoOpen } = useContext(MyContext);
   const [todoName, setTodoName] = useState("");
 
-  console.log(DefaultTodo)
-  console.log(NoteForTodo)
-
   const HandleCreateTodo = async () => {
     if (!todoName || !myData?.id) return;
   
     const collectionName = DefaultTodo ? "DefaultTodos" : "Notes";
     const documentId = DefaultTodo ? myData.id : NoteForTodo?.id; // Use NoteForTodo.id if not default
-    const newTodo = { id: Date.now().toString(), name: todoName, createdAt: new Date() };
+    const newTodo = { id: Date.now().toString(), IsCompleted: false, name: todoName, createdAt: new Date() };
   
     try {
       if (!documentId) {
@@ -33,7 +30,7 @@ const CreateTodo = ({ DefaultTodo, NoteForTodo }) => {
   
       if (docSnap.exists()) {
         const todos = docSnap.data().todos || [];
-        await updateDoc(docRef, { todos: [...todos, newTodo], isCompleted: false});
+        await updateDoc(docRef, { todos: [...todos, newTodo]});
       } else {
         await setDoc(docRef, { todos: [newTodo] });
       }
@@ -52,7 +49,7 @@ const CreateTodo = ({ DefaultTodo, NoteForTodo }) => {
           <DialogTitle className="text-xl font-semibold text-gray-800">Create a New Todo</DialogTitle>
         </DialogHeader>
         <Input placeholder="Todo Name" value={todoName} onChange={(e) => setTodoName(e.target.value)} />
-        <DialogFooter className="mt-6 flex justify-end space-x-2">
+        <DialogFooter className="mt-3 flex flex-col-reverse gap-2">
           <Button variant="outline" onClick={() => SetIsTodoOpen(false)}>
             Cancel
           </Button>

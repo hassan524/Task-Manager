@@ -8,6 +8,7 @@ import { Outlet, useNavigate } from "react-router-dom";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import Header from "@/components/Header";
+import Logout from "@/methods/Logout/Logout";
 
 const MainLayout = () => {
   const dispatch = useDispatch();
@@ -52,13 +53,14 @@ const MainLayout = () => {
       <Header /> {/* Fixed header */}
       <SidebarProvider>
         <AppSidebar />
-        <SidebarTrigger className="md:hidden" />
+        <SidebarTrigger className="md:hidden text-gray-950" />
 
         {/* Main content */}
-        <div className="w-full m-5"> {/* Content starts after header */}
+        <div className="w-full m-5"> 
           <Outlet />
         </div>
       </SidebarProvider>
+      <Logout />
     </>
   );
 };

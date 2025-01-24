@@ -1,5 +1,6 @@
 // import React, { useEffect } from 'react'; 
 import { Outlet } from 'react-router-dom';
+import { Toaster } from "@/components/ui/sonner"
 
 const StartLayout = () => {
 
@@ -13,6 +14,7 @@ const StartLayout = () => {
         <div className="flex flex-col items-start">
           <div className="Start-content">
             <Outlet />
+            <Toaster />
           </div>
         </div>
       </div>

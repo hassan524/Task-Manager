@@ -1,6 +1,7 @@
 
 
 html, body {
+  pointer-events: fill !important; 
     font-family: "Raleway", serif;
     font-weight: normal;
     scrollbar-width: none;

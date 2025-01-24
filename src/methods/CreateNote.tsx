@@ -47,7 +47,7 @@ const CreateNote = () => {
 
   return (
     <Dialog open={IsNoteOepn} onOpenChange={setIsNoteOpen}>
-      <DialogContent className="p-6 max-w-md mx-auto bg-white rounded-lg shadow-md">
+      <DialogContent className="sm:max-w-[425px] w-[90vw] p-6 rounded-xl shadow-lg bg-white">
         {/* Header */}
         <DialogHeader className="text-center">
           <DialogTitle className="text-2xl font-semibold text-gray-800">
@@ -75,20 +75,10 @@ const CreateNote = () => {
             </Select>
           </div>
 
-          {/* Conditional Input */}
-          {noteType === "Text" && (
-            <div>
-              <input
-                type="text"
-                placeholder="Enter note title"
-                className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              />
-            </div>
-          )}
         </div>
 
         {/* Footer */}
-        <DialogFooter className="mt-6 flex justify-end space-x-3">
+        <DialogFooter className="mt-3 flex flex-col-reverse gap-2">
           <button
             className="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200"
             onClick={() => setIsNoteOpen(false)}

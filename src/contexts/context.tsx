@@ -1,10 +1,13 @@
 import React, { createContext, useState } from 'react';
 import { db } from '@/main/firebase';
-import { doc, deleteDoc, updateDoc, collection, getDocs, query, where } from 'firebase/firestore';
+import { doc, deleteDoc, updateDoc, collection, getDocs, getDoc, query, where } from 'firebase/firestore';
+import { useSelector } from 'react-redux';
 
 const MyContext = createContext<MyContextType | undefined>(undefined);
 
 export const MyProvider = ({ children }: { children: React.ReactNode }) => {
+
+  const myData = useSelector((state) => state.user);
 
   const [IsProjectOpen, setIsProjectOpen] = useState(false);
   const [IsGroupTaskOpen, setIsGroupTaskOpen] = useState(false);
@@ -19,6 +22,8 @@ export const MyProvider = ({ children }: { children: React.ReactNode }) => {
   const [IsManageGroup, SetIsManageGroup] = useState(false)
   
   const [IsTodoOpen, SetIsTodoOpen] = useState(false)
+
+  const [IsLogOutOpen, SetIsLogOutOpen] = useState(false)
 
   // delete function 
   async function deleteDocument(type: any) {
@@ -124,12 +129,82 @@ export const MyProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
 
+  async function DefaultTodoComplete(todo: { id: string }) {
+    const docRef = doc(db, "DefaultTodos", myData.id);
+  
+    try {
+      // Step 1: Get the document from Firestore
+      const docSnap = await getDoc(docRef);
+  
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+  
+        // Step 2: Find the `todos` array and the target object
+        if (Array.isArray(data.todos)) {
+          const updatedTodos = data.todos.map((item: any) => {
+            if (item.id === todo.id) {
+              // Step 3: Update the `isComplete` property to true
+              return { ...item, IsCompleted: true };
+            }
+            return item;
+          });
+  
+          // Step 4: Save the updated array back to Firestore
+          await updateDoc(docRef, { todos: updatedTodos });
+          console.log("Todo updated successfully!");
+        } else {
+          console.error("`todos` is not an array or is missing in the document.");
+        }
+      } else {
+        console.error("Document does not exist.");
+      }
+    } catch (error) {
+      console.error("Error updating todo:", error);
+    }
+  }
+
+  async function NotesTodoComplete(todo:any, id:string) {
+    const docRef = doc(db, "Notes", id);
+
+    try {
+      // Step 1: Get the document from Firestore
+      const docSnap = await getDoc(docRef);
+  
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+  
+        // Step 2: Find the `todos` array and the target object
+        if (Array.isArray(data.todos)) {
+          const updatedTodos = data.todos.map((item: any) => {
+            if (item.id === todo.id) {
+              // Step 3: Update the `isComplete` property to true
+              return { ...item, IsCompleted: true };
+            }
+            return item;
+          });
+  
+          // Step 4: Save the updated array back to Firestore
+          await updateDoc(docRef, { todos: updatedTodos });
+          console.log("Todo updated successfully!");
+        } else {
+          console.error("`todos` is not an array or is missing in the document.");
+        }
+      } else {
+        console.error("Document does not exist.");
+      }
+    } catch (error) {
+      console.error("Error updating todo:", error);
+    }
+
+  }
+  
   return (
     <MyContext.Provider value={{
       IsProjectOpen, setIsProjectOpen, IsGroupTaskOpen, setIsGroupTaskOpen, IsTaskOpen, setIsTaskOpen,
       IsProjectCreate, SetIsProjectCreate, IsManageProject, SetIsManageProject,
       IsGroupProjectCreate, SetIsGroupProjectCreate, IsTaskCreate, SetIsTaskCreate,
-      deleteDocument, IsManageGroup, SetIsManageGroup, Complete, IsNoteOepn, setIsNoteOpen, IsTodoOpen, SetIsTodoOpen
+      deleteDocument, IsManageGroup, SetIsManageGroup, Complete, IsNoteOepn, setIsNoteOpen, IsTodoOpen, SetIsTodoOpen, DefaultTodoComplete,
+      NotesTodoComplete, IsLogOutOpen, SetIsLogOutOpen
       
     }}>
       {children}

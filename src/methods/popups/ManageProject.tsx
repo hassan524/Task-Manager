@@ -10,7 +10,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import MyContext from "@/contexts/context";
-import { Timestamp } from "firebase/firestore"; // Import Timestamp from Firebase
+import { Timestamp, doc, updateDoc } from "firebase/firestore"; // Import Timestamp from Firebase
+import { db } from "@/main/firebase";
 
 const ManageProject = ({ project }) => {
   const { IsManageProject, SetIsManageProject } = useContext(MyContext);
@@ -29,8 +30,8 @@ const ManageProject = ({ project }) => {
       // Check if deadline exists and handle it
       if (project.deadline) {
         // If it's a Firebase Timestamp, convert it to Date
-        const deadlineDate = project.deadline instanceof Timestamp 
-          ? project.deadline.toDate() 
+        const deadlineDate = project.deadline instanceof Timestamp
+          ? project.deadline.toDate()
           : new Date(project.deadline);
 
         setDeadline(deadlineDate);
@@ -48,28 +49,47 @@ const ManageProject = ({ project }) => {
     }
   }, [project]);
 
-  const handleSaveChanges = () => {
-    alert("Changes saved!");
+  const handleSaveChanges = async () => {
+    try {
+      const docRef = doc(db, 'projects', project.id); // Ensure db and project are defined
+      await updateDoc(docRef, {
+        projectName
+      });
+      console.log("Document successfully updated!");
+    } catch (error) {
+      console.error("Error updating document: ", error);
+    }
   };
 
   return (
     <Dialog open={IsManageProject} onOpenChange={SetIsManageProject}>
-      <DialogContent>
+      <DialogContent className="flex flex-col gap-5 sm:max-w-[425px] w-[90vw] p-6 rounded-xl shadow-lg bg-white">
         <DialogHeader>
-          <DialogTitle>Manage Project</DialogTitle>
+          <DialogTitle className="text-2xl">Manage Project</DialogTitle>
           <DialogDescription>Update the details of your project and save the changes.</DialogDescription>
         </DialogHeader>
-        <div className="space-y-4">
+        <div className="flex flex-col gap-5">
           {/* Project Name */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Project Name</label>
-            <Input
-              type="text"
-              value={projectName}
-              onChange={(e) => setProjectName(e.target.value)}
-              placeholder="Enter project name"
-              className="mt-1"
-            />
+
+          <div className="flex flex-col gap-6">
+            <div>
+              <label className="block text-[1rem] font-medium text-gray-500">Project Name</label>
+              <Input
+                type="text"
+                value={projectName}
+                onChange={(e) => setProjectName(e.target.value)}
+                placeholder="Enter project name"
+                className="mt-1 outline-none"
+              />
+            </div>
+
+
+
+            {/* Created At */}
+            <div>
+              <label className="block text-[1rem] font-medium text-gray-500">Created At</label>
+              <Input type="text" value={createdAt} disabled className="mt-1" />
+            </div>
           </div>
 
           {/* Days Left */}
@@ -86,24 +106,19 @@ const ManageProject = ({ project }) => {
             </div>
           </div>
 
-          {/* Created At */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Created At</label>
-            <Input type="text" value={createdAt} disabled className="mt-1" />
-          </div>
         </div>
 
-        <DialogFooter className="mt-4">
-          <Button variant="primary" onClick={handleSaveChanges}>
+        <DialogFooter className="mt-4 flex flex-col-reverse">
+          <Button variant="secondary" onClick={handleSaveChanges}>
             Save Changes
           </Button>
-          <Button variant="secondary" onClick={() => SetIsManageProject(false)}>
+          {/* <Button variant="primary" onClick={() => SetIsManageProject(false)}>
             Cancel
-          </Button>
+          </Button> */}
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
 };
 
-export default ManageProject;
+export default ManageProject; 

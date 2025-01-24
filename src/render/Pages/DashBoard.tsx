@@ -19,7 +19,7 @@ import CreateTask from "@/methods/CreateTask";
 import { useSelector } from "react-redux";
 import ManageProject from "@/methods/popups/ManageProject";
 import useFetchData from "@/hooks/fetch-hook";
-import ManageGroup from "@/methods/popups/ManageGroup";
+import ManageGroup from "@/methods/popups/ManageGroup"; 
 import { Checkbox } from "@/components/ui/checkbox";
 
 const DashBoard = () => {
@@ -50,7 +50,6 @@ const DashBoard = () => {
   const [SelectTaskForChildGroupProject, setSelectTaskForChildGroupProject] = useState(null);
   const [SelectTaskForChildGroup, setSelectTaskForChildGroup] = useState(null);
 
-  // const [IsTaskComplete, SetIsTaskComplete] = useState(false) 
 
   const myData = useSelector((state) => state.user);
 
@@ -129,10 +128,10 @@ const DashBoard = () => {
       {/* Projects Section */}
       <div className="wrapper flex flex-col gap-[3rem]">
         <div className="relative w-full min-h-96 border border-slate-100 rounded-lg bg-white shadow-md">
-          <div className="flex items-center justify-between border-b p-2 border-slate-200">
+          <div className="flex items-center justify-between border-b p-4 border-slate-200">
             <h3 className="font-semibold text-lg text-slate-600">Your Projects</h3>
             <button
-              className="px-3 py-1 bg-primary text-white text-sm rounded-lg hover:bg-primary/90"
+              className="px-3 py-1 font-semibold bg-primary text-white text-sm rounded-lg hover:bg-primary/90"
               onClick={() => setIsProjectOpen(true)}
             >
               + Add New
@@ -173,7 +172,7 @@ const DashBoard = () => {
                         Create Task
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => handleDelete(project)}>
-                        Delete Task
+                        Delete Project
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -184,14 +183,14 @@ const DashBoard = () => {
                       (group, groupIndex) => (
                         <Accordion type="single" collapsible className="flex flex-col" key={groupIndex}>
                           <AccordionItem value={`group-${groupIndex}`}>
-                            <AccordionTrigger className="flex items-center justify-between w-full p-2 border border-slate-200 rounded-md hover:shadow-sm">
-                              <div className="flex items-center gap-2">
+                            <AccordionTrigger className="flex items-center justify-between w-full p-3 border border-slate-200 rounded-md hover:shadow-sm">
+                              <div className="flex items-center gap-3">
                                 <Checkbox
                                   onClick={() =>
                                     handleComplete(group)
                                   } checked={group.IsCompleted}
                                 />
-                                <i className="bi bi-folder2-open text-[#E0FFCE] text-lg"></i>
+                                <i className="bi bi-folder2-open text-[#FFC6C6] text-xl"></i>
                                 <span className="text-sm font-medium text-slate-600">
                                   {group.GroupName}
                                 </span>
@@ -205,7 +204,7 @@ const DashBoard = () => {
                                     Create Task
                                   </DropdownMenuItem>
                                   <DropdownMenuItem onClick={() => handleDelete(group)}>
-                                    delete Task
+                                    Delete Group
                                   </DropdownMenuItem>
                                 </DropdownMenuContent>
                               </DropdownMenu>
@@ -216,16 +215,16 @@ const DashBoard = () => {
                                   (task, taskIndex) => (
                                     <div
                                       key={taskIndex}
-                                      className="flex items-center bg-slate-100 justify-between w-full p-2 border border-slate-200 rounded-md hover:shadow-sm"
+                                      className="flex items-center bg-slate-100 justify-between w-full p-3 border border-slate-200 rounded-md hover:shadow-sm"
                                     >
-                                      <div className="flex items-center gap-2">
+                                      <div className="flex items-center gap-3">
                                         <Checkbox
                                           // checked={isChecked} 
                                           onClick={() =>
                                             handleComplete(task)
                                           } checked={task.IsCompleted}
                                         />
-                                        <i className="bi bi-folder2-open text-[#E0FFCE] text-lg"></i>
+                                        <i className="bi bi-check2-square text-[#CCEEBC] text-xl"></i>
                                         <span className="text-sm font-medium text-slate-600">
                                           {task.TaskName}
                                         </span>
@@ -258,13 +257,13 @@ const DashBoard = () => {
       {/* Group Tasks Section */}
       <div className="wrapper flex flex-col gap-[3rem]">
         <div className="relative w-full min-h-96 border border-slate-100 rounded-lg bg-white shadow-md">
-          <div className="flex items-center justify-between border-b p-2 border-slate-200">
+          <div className="flex items-center justify-between border-b p-4 border-slate-200">
             <h3 className="font-semibold text-lg text-slate-600">Your Group Tasks</h3>
             <button
-              className="px-3 py-1 bg-primary text-white text-sm rounded-lg hover:bg-primary/90"
+              className="px-3 font-semibold py-1 bg-primary text-white text-sm rounded-lg hover:bg-primary/90"
               onClick={() => setIsGroupTaskOpen(true)}
             >
-              + Add Group Task
+               + Add New
             </button>
           </div>
           <Accordion type="single" collapsible>
@@ -279,7 +278,7 @@ const DashBoard = () => {
                       checked={groupTask.IsCompleted}
 
                     />
-                    <i className="bi bi-folder2-open text-[#E0FFCE] text-xl"></i>
+                    <i className="bi bi-folder2-open text-[#FFC6C6] text-xl"></i>
                     <span className="font-medium text-slate-600 text-sm">
                       {groupTask.GroupName}
                     </span>
@@ -298,10 +297,7 @@ const DashBoard = () => {
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => handleChildTaskOfGroup(groupTask)}>Create Task</DropdownMenuItem>
                       <DropdownMenuItem onClick={() => handleDelete(groupTask)}>
-                        Delete Task
-                      </DropdownMenuItem>
-                      <DropdownMenuItem >
-                        Manage Group
+                        Delete Group
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -314,12 +310,12 @@ const DashBoard = () => {
                           key={taskIndex}
                           className="flex items-center bg-slate-100 justify-between w-full p-2 border border-slate-200 rounded-md hover:shadow-sm"
                         >
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-3">
                             <Checkbox
                               checked={task2.IsCompleted}
                               onClick={() => handleComplete(task2)}
                             />
-                            <i className="bi bi-folder2-open text-[#E0FFCE] text-lg"></i>
+                             <i className="bi bi-check2-square text-[#CCEEBC] text-xl"></i>
                             <span className="text-sm font-medium text-slate-600">
                               {task2.TaskName}
                             </span>
@@ -342,13 +338,13 @@ const DashBoard = () => {
       {/* Tasks Section */}
       <div className="wrapper flex flex-col gap-[3rem]">
         <div className="relative w-full min-h-96 border border-slate-100 rounded-lg bg-white shadow-md">
-          <div className="flex items-center justify-between border-b p-2 border-slate-200">
+          <div className="flex items-center justify-between border-b p-4 border-slate-200">
             <h3 className="font-semibold text-lg text-slate-600">Your Tasks</h3>
             <button
-              className="px-3 py-1 bg-primary text-white text-sm rounded-lg hover:bg-primary/90"
+              className="px-3 py-1 font-sem bg-primary text-white text-sm rounded-lg hover:bg-primary/90"
               onClick={() => setIsTaskOpen(true)}
             >
-              + Add Task
+               + Add New
             </button>
           </div>
           <Accordion type="single" collapsible>
@@ -360,7 +356,7 @@ const DashBoard = () => {
                       checked={task.IsCompleted}
                       onClick={() => handleComplete(task)}
                     />
-                    {/* <i className="bi bi-check-circle text-[#CEFFCE] text-xl"></i>  */}
+                  <i className="bi bi-check2-square text-[#CCEEBC] text-xl"></i>
                     <span className="font-medium text-slate-600 text-sm">{task.TaskName}</span>
                   </div>
                   <DropdownMenu>
@@ -387,7 +383,7 @@ const DashBoard = () => {
         GroupOfTask2={SelectTaskForChildGroup}
         GroupOfTask={SelectTaskForChildGroupProject}
       />
-      {selectedProject && <ManageProject project={selectedProject} />}
+      {selectedProject && <ManageProject project={selectedProject} />} 
       {SelectedGroup && <ManageGroup group={SelectedGroup} />}
     </div>
   );
