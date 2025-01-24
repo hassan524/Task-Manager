@@ -19,8 +19,11 @@ import CreateTask from "@/methods/CreateTask";
 import { useSelector } from "react-redux";
 import ManageProject from "@/methods/popups/ManageProject";
 import useFetchData from "@/hooks/fetch-hook";
-import ManageGroup from "@/methods/popups/ManageGroup"; 
+import ManageGroup from "@/methods/popups/ManageGroup";
 import { Checkbox } from "@/components/ui/checkbox";
+import CompleteConfirm from '@/methods/popups/CompleteConfirm';
+import { db } from "@/main/firebase";
+import { doc } from "firebase/firestore";
 
 const DashBoard = () => {
   const {
@@ -33,6 +36,8 @@ const DashBoard = () => {
     deleteDocument,
     SetIsManageGroup,
     Complete,
+    IsCompleteDilogOpen, SetIsCompleteDilogOpen,
+    handleCompleteWithConfirmation
   } = useContext(MyContext);
 
   const [projects, setProjects] = useState([]);
@@ -109,9 +114,12 @@ const DashBoard = () => {
     deleteDocument(type);
   };
 
-  const handleComplete = (type) => {
-    Complete(type)
-  }
+  const handleComplete = async (item) => {
+    await handleCompleteWithConfirmation(item); // Call the Complete function
+  };
+
+
+
 
 
   return (
@@ -221,7 +229,7 @@ const DashBoard = () => {
                                         <Checkbox
                                           // checked={isChecked} 
                                           onClick={() =>
-                                            handleComplete(task)
+                                            handleComplete(group)
                                           } checked={task.IsCompleted}
                                         />
                                         <i className="bi bi-check2-square text-[#CCEEBC] text-xl"></i>
@@ -263,7 +271,7 @@ const DashBoard = () => {
               className="px-3 font-semibold py-1 bg-primary text-white text-sm rounded-lg hover:bg-primary/90"
               onClick={() => setIsGroupTaskOpen(true)}
             >
-               + Add New
+              + Add New
             </button>
           </div>
           <Accordion type="single" collapsible>
@@ -315,7 +323,7 @@ const DashBoard = () => {
                               checked={task2.IsCompleted}
                               onClick={() => handleComplete(task2)}
                             />
-                             <i className="bi bi-check2-square text-[#CCEEBC] text-xl"></i>
+                            <i className="bi bi-check2-square text-[#CCEEBC] text-xl"></i>
                             <span className="text-sm font-medium text-slate-600">
                               {task2.TaskName}
                             </span>
@@ -344,7 +352,7 @@ const DashBoard = () => {
               className="px-3 py-1 font-sem bg-primary text-white text-sm rounded-lg hover:bg-primary/90"
               onClick={() => setIsTaskOpen(true)}
             >
-               + Add New
+              + Add New
             </button>
           </div>
           <Accordion type="single" collapsible>
@@ -356,7 +364,7 @@ const DashBoard = () => {
                       checked={task.IsCompleted}
                       onClick={() => handleComplete(task)}
                     />
-                  <i className="bi bi-check2-square text-[#CCEEBC] text-xl"></i>
+                    <i className="bi bi-check2-square text-[#CCEEBC] text-xl"></i>
                     <span className="font-medium text-slate-600 text-sm">{task.TaskName}</span>
                   </div>
                   <DropdownMenu>
@@ -383,7 +391,7 @@ const DashBoard = () => {
         GroupOfTask2={SelectTaskForChildGroup}
         GroupOfTask={SelectTaskForChildGroupProject}
       />
-      {selectedProject && <ManageProject project={selectedProject} />} 
+      {selectedProject && <ManageProject project={selectedProject} />}
       {SelectedGroup && <ManageGroup group={SelectedGroup} />}
     </div>
   );
