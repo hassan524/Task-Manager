@@ -1,6 +1,7 @@
 {
   "name": "task-manager",
   "private": true,
+  "author": "Hassan Rehan",
   "version": "0.0.0",
   "type": "module",
   "scripts": {
@@ -26,7 +27,6 @@
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "firebase": "^11.1.0",
-    "hamburger-react": "^2.5.2",
     "lucide-react": "^0.469.0",
     "next-themes": "^0.4.4",
     "react": "^18.3.1",
@@ -35,11 +35,9 @@
     "react-dom": "^18.3.1",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.1.1",
-    "react-tsparticles": "^2.12.2",
     "sonner": "^1.7.2",
     "tailwind-merge": "^2.6.0",
-    "tailwindcss-animate": "^1.0.7",
-    "tsparticles": "^3.7.1"
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@eslint/js": "^9.15.0",

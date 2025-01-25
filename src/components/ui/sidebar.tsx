@@ -281,12 +281,6 @@ const SidebarTrigger = React.forwardRef<
     >
       <PanelLeft className='md:hidden block text-gray-300' />
       <div className="md:block hidden text-slate-900">
-      <Hamburger
-  toggled={isopen}
-  toggle={() => setIsOpen(!isopen)}
-  color="#6b7280"
-  size={20}
-/>
       </div>
       {/* <span>hassan</span>  */}
     </Button>

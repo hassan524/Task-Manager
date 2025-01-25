@@ -12,8 +12,16 @@ import CreateTodo from '@/methods/CreateTodo';
 import fetchTodos from '@/hooks/fetch-todos';
 import fetchNotes from "@/hooks/fetch-Notes";
 import { Checkbox } from "@/components/ui/checkbox";
+// import AOS from 'aos';
+// import 'aos/dist/aos.css';
+import CountUp from 'react-countup';
+
+
 
 const Home = () => {
+
+  // AOS.init() 
+
   const [title, setTitle] = useState('');
   const [text, setText] = useState('');
   const [Title2, setTitle2] = useState('');
@@ -24,7 +32,7 @@ const Home = () => {
 
   const myData = useSelector((state) => state.user);
   const [identity, setIdentity] = useState<string | number | null>(null);
-  const { setIsNoteOpen, IsTodoOpen, SetIsTodoOpen, DefaultTodoComplete, NotesTodoComplete } = useContext(MyContext);
+  const { SetIsNoteOpen, IsTodoOpen, SetIsTodoOpen, DefaultTodoComplete, NotesTodoComplete } = useContext(MyContext);
   const { pendingProjects = [], pendingGroups = [], pendingTasks = [] } = useFetchPending();
   const { completedProjects = [], OnGoingProjects = [], completedGroups = [], completedTasks = [] } = useFetchComplete();
   const [IsSetDefaultTodo, SetIsDefaultTodo] = useState(false);
@@ -33,7 +41,7 @@ const Home = () => {
   const notes = fetchNotes();
 
   useEffect(() => {
-    if (myData?.name) setIdentity(myData.name.charAt(0));
+    if (myData?.name) setIdentity(myData.name.charAt(0).toUpperCase());
   }, [myData]);
 
   console.log(myData.id)
@@ -142,6 +150,10 @@ const Home = () => {
     NotesTodoComplete(todo, docid)
   }
 
+  // function HandleNote() {
+  //   setIsNoteOpen(true)
+  // }
+
   async function deleteNote(id) {
     await deleteDoc(doc(db, "Notes", id));
   }
@@ -156,7 +168,7 @@ const Home = () => {
   const colors = ['#C4D7FF', '#CDC1FF', '#FFC6C6', '#CCEEBC'];
 
   return (
-    <div className="wrapper flex flex-col gap-10">
+    <div className="wrapper flex flex-col gap-10"  >
       <div className="w-full flex items-center justify-between">
         <div className="flex items-center gap-2">
           <i className="bi bi-houses-fill text-primary text-lg"></i>
@@ -174,14 +186,19 @@ const Home = () => {
           { label: 'Total Completed Projects', count: completedProjects?.length || 0 },
           { label: 'Ongoing Projects', count: OnGoingProjects?.length || 0 },
           { label: 'Completed Group Tasks', count: completedGroups?.length || 0 },
-          { label: 'Completed Tasks', count: completedTasks?.length || 0 }
+          { label: 'Completed Tasks', count: completedTasks?.length || 0 },
         ].map((card, index) => (
           <div
             key={index}
-            className="text-white p-6 rounded-2xl text-center shadow-md hover:shadow-lg transition-all ease-in-out duration-300 transform hover:-translate-y-1"
+            className="text-white p-6 rounded-2xl text-center shadow-md hover:shadow-lg"
             style={{ backgroundColor: colors[index] }}
+            data-aos="fade-down"
+            data-aos-delay={index * 200}
+            data-aos-duration={1000}
           >
-            <div className="text-4xl font-extrabold">{card.count}</div>
+            <div className="text-4xl font-extrabold">
+              <CountUp end={card.count} duration={3} />
+            </div>
             <div className="mt-2 text-md font-semibold">{card.label}</div>
           </div>
         ))}
@@ -189,11 +206,13 @@ const Home = () => {
 
       <div className="flex flex-col gap-14">
         {[{ title: 'Pending Projects', data: pendingProjects }, { title: 'Pending Group Tasks', data: pendingGroups }, { title: 'Pending Tasks', data: pendingTasks }].map((section, index) => (
-         <div
-         key={index}
-         className="relative h-auto min-h-[50vh] w-full rounded-2xl shadow-lg overflow-hidden"
-       >
-         {/* Content goes here */}
+          <div
+            data-aos="fade-down"
+            data-aos-duration={1000}
+            key={index}
+            className="relative h-auto min-h-[50vh] w-full rounded-2xl shadow-lg overflow-hidden"
+          >
+            {/* Content goes here */}
             <div
               className="absolute inset-x-0 top-0 h-10 flex items-center px-5"
               style={{ background: `linear-gradient(90deg, ${gradientColors[index]?.from} 0%, ${gradientColors[index]?.to} 100%)` }}
@@ -206,6 +225,9 @@ const Home = () => {
                   <div
                     key={idx}
                     className="flex items-center justify-between w-full p-2 bg-white border border-gray-200 shadow-sm hover:shadow-md"
+                    data-aos="fade-down"
+                    data-aos-delay={index * 100}
+                    data-aos-duration={1000}
                   >
                     <div className="flex items-center gap-3">
                       {item.type === 'project' ? (
@@ -234,22 +256,29 @@ const Home = () => {
         ))}
       </div>
 
-      <div className="w-full flex items-center justify-between mt-8">
+      <div className="w-full flex items-center justify-between mt-8" data-aos="fade-down"
+        data-aos-duration={1000}>
         <div className="flex items-center gap-2">
           <i className="bi bi-file-earmark-check-fill text-primary"></i>
-          <span className="font-bold text-primary text-lg">Notes</span>
+          <span className="font-bold text-primary text-lg"  >Notes</span>
         </div>
         <button
           className="bg-primary text-white px-4 py-2 rounded-xl font-semibold hover:bg-opacity-90 shadow-md"
-          onClick={() => setIsNoteOpen(true)}
+          onClick={() => {
+            console.log("Button clicked");
+            SetIsNoteOpen(true);
+          }}
         >
           Create Note
         </button>
+
       </div>
 
       <div className="grid lg:grid-cols-2 gap-5">
+
         {/* Note Taking Section */}
-        <div className="w-full h-[42vh] rounded-2xl overflow-hidden bg-white shadow-md">
+        <div className="w-full h-[42vh] rounded-2xl overflow-hidden bg-white shadow-md"        data-aos="fade-down"
+           data-aos-duration={1000}> 
           <div className="h-[7vh] flex bg-[#FCFFC1] items-center px-3">
             <input
               className="h-full w-full text-gray-700 font-semibold text-lg outline-none bg-transparent placeholder-gray-500"
@@ -268,7 +297,8 @@ const Home = () => {
         </div>
 
         {/* Todo Section */}
-        <div className="w-full h-[42vh] rounded-2xl overflow-hidden bg-white shadow-md">
+        <div className="w-full h-[42vh] rounded-2xl overflow-hidden bg-white shadow-md"        data-aos="fade-down"
+           data-aos-duration={1000}>
           <div className="h-[7vh] bg-[#FFE2E2] flex items-center px-3">
             <button
               onClick={HandleDefaultTodo}
@@ -281,7 +311,7 @@ const Home = () => {
           <div className="p-3 text-gray-700 text-md">
             {todos.length > 0 ? (
               todos.map((todo) => (
-                <div key={todo.id} className="py-1 flex items-center gap-2 font-semibold">
+                <div key={todo.id} className="py-1 flex items-center gap-2 font-semibold" >
                   <Checkbox checked={todo.IsCompleted} onClick={() => HandleDefaultTodoComplete(todo)} className='text-slate-500 data-[state=checked]:bg-[#C4D7FF]' />
                   <span>{todo.name}</span>
                 </div>
@@ -298,6 +328,9 @@ const Home = () => {
           <div
             className="w-full h-[42vh] rounded-2xl overflow-hidden bg-white shadow-md"
             key={note.id}
+            data-aos="fade-down"
+            data-aos-duration={1000}
+
           >
             {/* Note Header */}
             <div

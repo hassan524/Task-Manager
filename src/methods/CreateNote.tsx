@@ -21,7 +21,7 @@ import { db } from "@/main/firebase";
 import { useSelector } from "react-redux";
 
 const CreateNote = () => {
-  const { IsNoteOepn, setIsNoteOpen } = useContext(MyContext);
+  const { IsNoteOpen, SetIsNoteOpen } = useContext(MyContext);
   const [noteType, setNoteType] = useState("");
 
   const myData = useSelector((state) => state.user);
@@ -39,14 +39,14 @@ const CreateNote = () => {
       });
 
       console.log("Note created with auto-generated ID!");
-      setIsNoteOpen(false); // Close the dialog after saving
+      SetIsNoteOpen(false); // Close the dialog after saving
     } catch (error) {
       console.error("Error creating note: ", error);
     }
   };
 
   return (
-    <Dialog open={IsNoteOepn} onOpenChange={setIsNoteOpen}>
+    <Dialog open={IsNoteOpen} onOpenChange={SetIsNoteOpen}>
       <DialogContent className="sm:max-w-[425px] w-[90vw] p-6 rounded-xl shadow-lg bg-white">
         {/* Header */}
         <DialogHeader className="text-center">

@@ -29,7 +29,7 @@ export const MyProvider = ({ children }: { children: React.ReactNode }) => {
   const [IsProjectOpen, setIsProjectOpen] = useState(false);
   const [IsGroupTaskOpen, setIsGroupTaskOpen] = useState(false);
   const [IsTaskOpen, setIsTaskOpen] = useState(false);
-  const [IsNoteOpen, setIsNoteOpen] = useState(false);
+  const [IsNoteOpen, SetIsNoteOpen] = useState(false);
 
   const [IsProjectCreate, SetIsProjectCreate] = useState(false);
   const [IsGroupProjectCreate, SetIsGroupProjectCreate] = useState(false);
@@ -197,7 +197,7 @@ export const MyProvider = ({ children }: { children: React.ReactNode }) => {
         IsManageGroup,
         SetIsManageGroup,
         IsNoteOpen,
-        setIsNoteOpen,
+        SetIsNoteOpen,
         IsTodoOpen,
         SetIsTodoOpen,
         IsLogOutOpen,

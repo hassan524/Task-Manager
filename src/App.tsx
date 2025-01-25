@@ -16,7 +16,9 @@ import CompletedTask from './render/Pages/CompletedTask';
 
 AOS.init();
 
+
 const App = () => {
+
   return (
     <MyProvider> 
       <Routes>

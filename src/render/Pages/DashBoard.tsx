@@ -134,7 +134,8 @@ const DashBoard = () => {
       <Separator className="bg-slate-100" />
 
       {/* Projects Section */}
-      <div className="wrapper flex flex-col gap-[3rem]">
+      <div className="wrapper flex flex-col gap-[3rem]" data-aos="fade-down"
+        data-aos-duration={1000}>
         <div className="relative w-full min-h-96 border border-slate-100 rounded-lg bg-white shadow-md">
           <div className="flex items-center justify-between border-b p-4 border-slate-200">
             <h3 className="font-semibold text-lg text-slate-600">Your Projects</h3>
@@ -263,7 +264,8 @@ const DashBoard = () => {
       </div>
 
       {/* Group Tasks Section */}
-      <div className="wrapper flex flex-col gap-[3rem]">
+      <div className="wrapper flex flex-col gap-[3rem]" data-aos="fade-down"
+        data-aos-duration={1000}>
         <div className="relative w-full min-h-96 border border-slate-100 rounded-lg bg-white shadow-md">
           <div className="flex items-center justify-between border-b p-4 border-slate-200">
             <h3 className="font-semibold text-lg text-slate-600">Your Group Tasks</h3>
@@ -344,7 +346,8 @@ const DashBoard = () => {
       </div>
 
       {/* Tasks Section */}
-      <div className="wrapper flex flex-col gap-[3rem]">
+      <div className="wrapper flex flex-col gap-[3rem]"  data-aos="fade-down"
+        data-aos-duration={1000}>
         <div className="relative w-full min-h-96 border border-slate-100 rounded-lg bg-white shadow-md">
           <div className="flex items-center justify-between border-b p-4 border-slate-200">
             <h3 className="font-semibold text-lg text-slate-600">Your Tasks</h3>
