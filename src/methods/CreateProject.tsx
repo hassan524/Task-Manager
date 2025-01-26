@@ -47,7 +47,7 @@ const CreateProject = () => {
   };
 
   return (
-    <Dialog open={IsProjectOpen} onOpenChange={setIsProjectOpen} className="mx-5">
+    <Dialog open={IsProjectOpen} onOpenChange={setIsProjectOpen}>
       <DialogContent className="sm:max-w-[425px] w-[90vw] p-6 rounded-xl shadow-lg bg-white">
         <DialogHeader className="text-center">
           <DialogTitle className="text-xl font-semibold text-gray-800">

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import { useSelector } from 'react-redux';
 import { Separator } from '@/components/ui/separator';
@@ -12,9 +12,8 @@ import CreateTodo from '@/methods/CreateTodo';
 import fetchTodos from '@/hooks/fetch-todos';
 import fetchNotes from "@/hooks/fetch-Notes";
 import { Checkbox } from "@/components/ui/checkbox";
-// import AOS from 'aos';
-// import 'aos/dist/aos.css';
 import CountUp from 'react-countup';
+import { RootState } from "@/redux/store/Store";
 
 
 
@@ -30,11 +29,11 @@ const Home = () => {
   const [SelectNoteForTodo, SetSelectNoteForTodo] = useState(null);
   console.log(SelectNoteForTodo)
 
-  const myData = useSelector((state) => state.user);
+  const myData = useSelector((state: RootState) => state.user);
   const [identity, setIdentity] = useState<string | number | null>(null);
   const { SetIsNoteOpen, IsTodoOpen, SetIsTodoOpen, DefaultTodoComplete, NotesTodoComplete } = useContext(MyContext);
   const { pendingProjects = [], pendingGroups = [], pendingTasks = [] } = useFetchPending();
-  const { completedProjects = [], OnGoingProjects = [], completedGroups = [], completedTasks = [] } = useFetchComplete();
+  const { completedProjects = [], onGoingProjects = [], completedGroups = [], completedTasks = [] } = useFetchComplete();
   const [IsSetDefaultTodo, SetIsDefaultTodo] = useState(false);
 
   const todos = fetchTodos();
@@ -184,7 +183,7 @@ const Home = () => {
       <div className="grid lg:grid-cols-4 md:grid-cols-2 gap-6">
         {[
           { label: 'Total Completed Projects', count: completedProjects?.length || 0 },
-          { label: 'Ongoing Projects', count: OnGoingProjects?.length || 0 },
+          { label: 'Ongoing Projects', count: onGoingProjects?.length || 0 },
           { label: 'Completed Group Tasks', count: completedGroups?.length || 0 },
           { label: 'Completed Tasks', count: completedTasks?.length || 0 },
         ].map((card, index) => (
