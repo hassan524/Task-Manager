@@ -10,7 +10,6 @@ import { db } from '@/main/firebase';
 import { doc, setDoc, query, collection, where, onSnapshot, deleteDoc } from 'firebase/firestore';
 import CreateTodo from '@/methods/CreateTodo';
 import fetchTodos from '@/hooks/fetch-todos';
-import fetchNotes from "@/hooks/fetch-Notes";
 import { Checkbox } from "@/components/ui/checkbox";
 import CountUp from 'react-countup';
 import { RootState } from "@/redux/store/Store";
@@ -23,7 +22,7 @@ const Home = () => {
 
   const [title, setTitle] = useState('');
   const [text, setText] = useState('');
-  const [Title2, setTitle2] = useState('');
+  const [_, setTitle2] = useState('');
   const [Text2, setText2] = useState('');
   const [Notes, SetNotes] = useState([]);
   const [SelectNoteForTodo, SetSelectNoteForTodo] = useState(null);

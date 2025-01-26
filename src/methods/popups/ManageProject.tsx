@@ -18,7 +18,7 @@ const ManageProject = ({ project }) => {
 
   const [projectName, setProjectName] = useState("");
   const [createdAt, setCreatedAt] = useState("");
-  const [deadline, setDeadline] = useState<Date | null>(null);
+  const [_, setDeadline] = useState<Date | null>(null);
   const [daysLeft, setDaysLeft] = useState<number | null>(null);
 
   // Update state when the project prop changes
