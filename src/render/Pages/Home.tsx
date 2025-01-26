@@ -227,11 +227,11 @@ const Home = () => {
                     data-aos-duration={1000}
                   >
                     <div className="flex items-center gap-3">
-                      {item.type === 'project' ? (
+                      {item.type === 'projects' ? (
                         <i className="bi bi-folder text-[#93C5FD] text-xl"></i>
                       ) : item.type === 'Groups' ? (
                         <i className="bi bi-folder2-open text-[#D8B4FE] text-xl"></i>
-                      ) : item.type === 'Task' ? (
+                      ) : item.type === 'Tasks' ? (
                         <i className="bi bi-check2-square text-[#CCEEBC] text-xl"></i>
                       ) : null}
                       <span className="font-semibold text-gray-800 text-[14px]">
@@ -245,7 +245,7 @@ const Home = () => {
                 ))
               ) : (
                 <div className="h-full flex items-center justify-center">
-                  <img src="/public/nofound.png" alt={`No ${section.title}`} />
+                  <img src="/nofound.png" alt={`No ${section.title}`} />
                 </div>
               )}
             </div>
