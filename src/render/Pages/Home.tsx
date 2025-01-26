@@ -3,7 +3,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import { useSelector } from 'react-redux';
 import { Separator } from '@/components/ui/separator';
 import useFetchComplete from '@/hooks/fetch-complete-hook';
-import useFetchPending from '@/hooks/fetch-pending';
+import useFetchPending from '@/hooks/Fetch-pending';
 import CreateNote from '@/methods/CreateNote';
 import MyContext from '@/contexts/context';
 import { db } from '@/main/firebase';
