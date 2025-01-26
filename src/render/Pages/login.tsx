@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/main/firebase";
-import { toast, Toaster } from "sonner";
+import { toast } from "sonner";
 
 const Login = () => {
   const [email, setEmail] = useState<string | null>(null);

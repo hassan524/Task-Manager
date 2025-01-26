@@ -40,7 +40,7 @@ const DashBoard = () => {
 
   const [GroupsOfProjects, SetGroupsOfProjects] = useState([]);
   const [TasksOfGroupsProject, SetTasksOfGroupsProject] = useState([]);
-  const [Tasks2, SetTasks2] = useState([]);
+  const [_, SetTasks2] = useState([]);
 
   const [selectedProject, setSelectedProject] = useState(null);
   const [SelectedGroup, SetSelectedGroup] = useState(null)

@@ -37,7 +37,6 @@ const Home = () => {
   const [IsSetDefaultTodo, SetIsDefaultTodo] = useState(false);
 
   const todos = fetchTodos();
-  const notes = fetchNotes();
 
   useEffect(() => {
     if (myData?.name) setIdentity(myData.name.charAt(0).toUpperCase());
