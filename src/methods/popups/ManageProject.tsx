@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import {
   Dialog,
   DialogContent,
@@ -10,7 +10,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import MyContext from "@/contexts/context";
-import { Timestamp, doc, updateDoc } from "firebase/firestore"; // Import Timestamp from Firebase
+import { Timestamp, doc, updateDoc } from "firebase/firestore";
 import { db } from "@/main/firebase";
 
 const ManageProject = ({ project }) => {
@@ -18,8 +18,8 @@ const ManageProject = ({ project }) => {
 
   const [projectName, setProjectName] = useState("");
   const [createdAt, setCreatedAt] = useState("");
-  const [deadline, setDeadline] = useState(null);
-  const [daysLeft, setDaysLeft] = useState(null);
+  const [deadline, setDeadline] = useState<Date | null>(null);
+  const [daysLeft, setDaysLeft] = useState<number | null>(null);
 
   // Update state when the project prop changes
   useEffect(() => {
@@ -36,12 +36,16 @@ const ManageProject = ({ project }) => {
 
         setDeadline(deadlineDate);
 
-        // Calculate the days left
-        const calculatedDaysLeft = Math.max(
-          0,
-          Math.ceil((deadlineDate - new Date()) / (1000 * 60 * 60 * 24))
-        );
-        setDaysLeft(calculatedDaysLeft);
+        // Calculate the days left, only if deadline is valid
+        if (deadlineDate instanceof Date && !isNaN(deadlineDate.getTime())) {
+          const calculatedDaysLeft = Math.max(
+            0,
+            Math.ceil((deadlineDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
+          );
+          setDaysLeft(calculatedDaysLeft);
+        } else {
+          setDaysLeft(null);
+        }
       } else {
         setDeadline(null);
         setDaysLeft(null);
@@ -70,7 +74,6 @@ const ManageProject = ({ project }) => {
         </DialogHeader>
         <div className="flex flex-col gap-5">
           {/* Project Name */}
-
           <div className="flex flex-col gap-6">
             <div>
               <label className="block text-[1rem] font-medium text-gray-500">Project Name</label>
@@ -82,8 +85,6 @@ const ManageProject = ({ project }) => {
                 className="mt-1 outline-none"
               />
             </div>
-
-
 
             {/* Created At */}
             <div>
@@ -105,20 +106,19 @@ const ManageProject = ({ project }) => {
               </span>
             </div>
           </div>
-
         </div>
 
         <DialogFooter className="mt-4 flex flex-col-reverse">
-          <Button variant="secondary" onClick={handleSaveChanges}>
+          <Button variant="outline" onClick={handleSaveChanges}>
             Save Changes
           </Button>
-          {/* <Button variant="primary" onClick={() => SetIsManageProject(false)}>
+          <Button variant="secondary" onClick={() => SetIsManageProject(false)}>
             Cancel
-          </Button> */}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
 };
 
-export default ManageProject; 
+export default ManageProject;

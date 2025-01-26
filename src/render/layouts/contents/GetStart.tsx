@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { onAuthStateChanged, User } from 'firebase/auth';
-import { auth, db } from '@/main/firebase';
+import { auth } from '@/main/firebase';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 

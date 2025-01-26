@@ -2,9 +2,11 @@ import { useState, useEffect } from "react";
 import { db } from "@/main/firebase";
 import { collection, query, where, onSnapshot } from "firebase/firestore";
 import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store/Store";
+
 
 const useFetchPending = () => {
-  const myData = useSelector((state) => state.user); // Fetch user data from Redux state
+  const myData = useSelector((state: RootState) => state.user); // Fetch user data from Redux state
   const [pendingProjects, setPendingProjects] = useState([]);
   const [pendingGroups, setPendingGroups] = useState([]);
   const [pendingTasks, setPendingTasks] = useState([]);

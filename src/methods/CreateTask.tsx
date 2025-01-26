@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -15,6 +15,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { useSelector } from "react-redux";
 import { getCurrentDate } from "@/utils/date";
 import { db } from "@/main/firebase";
+import { RootState } from "@/redux/store/Store";
 import { doc, setDoc, Timestamp } from "firebase/firestore";
 
 const CreateTask = ({ GroupOfTask, GroupOfTask2 }) => {
@@ -22,7 +23,7 @@ const CreateTask = ({ GroupOfTask, GroupOfTask2 }) => {
   const [TaskName, setTaskName] = useState("");
   const [deadline, setDeadline] = useState<Date | null>(null);
 
-  const myData = useSelector((state) => state.user);
+  const myData = useSelector((state: RootState) => state.user);
 
   const handleSubmit = async () => {
     try {
@@ -31,23 +32,27 @@ const CreateTask = ({ GroupOfTask, GroupOfTask2 }) => {
       const collectionName = GroupOfTask
         ? "TasksOfGroupProjects"
         : GroupOfTask2
-          ? "GroupOfTask2"
-          : "Tasks";
+        ? "GroupOfTask2"
+        : "Tasks";
 
       const documentId = taskId;
 
+      // Firestore document creation with timestamp handling
       await setDoc(doc(db, collectionName, documentId), {
         IsCompleted: false,
         TaskName,
-        deadline: deadline ? Timestamp.fromDate(deadline) : null,
+        deadline: deadline ? Timestamp.fromDate(deadline) : null,  // Correct handling of date
         Authorid: myData.id,
         createdAt: currentDate,
         id: documentId,
         ProjectId: GroupOfTask?.id || GroupOfTask2?.id || null,
         type: GroupOfTask2
-          ? 'GroupOfTask2'
-          : (GroupOfTask ? 'TasksOfGroupProjects' : 'Task')
+          ? "GroupOfTask2"
+          : GroupOfTask
+          ? "TasksOfGroupProjects"
+          : "Tasks",
       });
+
       SetIsTaskCreate(true);
       setIsTaskOpen(false);
     } catch (error) {
@@ -56,7 +61,7 @@ const CreateTask = ({ GroupOfTask, GroupOfTask2 }) => {
   };
 
   return (
-    <Dialog open={IsTaskOpen} onOpenChange={setIsTaskOpen} className="mx-5">
+    <Dialog open={IsTaskOpen} onOpenChange={setIsTaskOpen}>
       <DialogContent className="sm:max-w-[425px] w-[90vw] p-6 rounded-xl shadow-lg bg-white">
         <DialogHeader className="text-center">
           <DialogTitle className="text-xl font-semibold text-gray-800">
@@ -89,7 +94,7 @@ const CreateTask = ({ GroupOfTask, GroupOfTask2 }) => {
             </label>
             <DatePicker
               selected={deadline}
-              onChange={(date) => setDeadline(date)}
+              onChange={(date: Date) => setDeadline(date)}  // Accepts Date as input
               showMonthDropdown
               showYearDropdown
               dropdownMode="select"

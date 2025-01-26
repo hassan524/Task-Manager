@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext } from "react";
 import { Separator } from "@/components/ui/separator";
 import {
   Accordion,
@@ -16,14 +16,10 @@ import MyContext from "@/contexts/context";
 import CreateProject from "@/methods/CreateProject";
 import CreateGroupTask from "@/methods/CreateGroupTask";
 import CreateTask from "@/methods/CreateTask";
-import { useSelector } from "react-redux";
 import ManageProject from "@/methods/popups/ManageProject";
 import useFetchData from "@/hooks/fetch-hook";
 import ManageGroup from "@/methods/popups/ManageGroup";
 import { Checkbox } from "@/components/ui/checkbox";
-import CompleteConfirm from '@/methods/popups/CompleteConfirm';
-import { db } from "@/main/firebase";
-import { doc } from "firebase/firestore";
 
 const DashBoard = () => {
   const {
@@ -35,8 +31,6 @@ const DashBoard = () => {
     SetIsManageProject,
     deleteDocument,
     SetIsManageGroup,
-    Complete,
-    IsCompleteDilogOpen, SetIsCompleteDilogOpen,
     handleCompleteWithConfirmation
   } = useContext(MyContext);
 
@@ -54,9 +48,6 @@ const DashBoard = () => {
   const [SelectProjectForChildGroup, setSelectProjectForChildGroup] = useState(null);
   const [SelectTaskForChildGroupProject, setSelectTaskForChildGroupProject] = useState(null);
   const [SelectTaskForChildGroup, setSelectTaskForChildGroup] = useState(null);
-
-
-  const myData = useSelector((state) => state.user);
 
   const {
     projects: fetchedProjects,

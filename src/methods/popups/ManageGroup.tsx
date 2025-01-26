@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import {
   Dialog,
   DialogContent,
@@ -18,8 +18,8 @@ const ManageGroup = ({ group }) => {
 
   const [GroupName, setGroupName] = useState("");
   const [createdAt, setCreatedAt] = useState("");
-  const [deadline, setDeadline] = useState(null);
-  const [daysLeft, setDaysLeft] = useState(null);
+  const [deadline, setDeadline] = useState<Date | null>(null);
+  const [daysLeft, setDaysLeft] = useState<number | null>(null);
 
   // Update state when the group prop changes
   useEffect(() => {
@@ -29,15 +29,16 @@ const ManageGroup = ({ group }) => {
 
       // Check if deadline exists and handle it
       if (group.deadline) {
-        const deadlineDate = group.deadline instanceof Timestamp
-          ? group.deadline.toDate()
-          : new Date(group.deadline);
+        const deadlineDate =
+          group.deadline instanceof Timestamp
+            ? group.deadline.toDate()
+            : new Date(group.deadline);
 
         setDeadline(deadlineDate);
 
         const calculatedDaysLeft = Math.max(
           0,
-          Math.ceil((deadlineDate - new Date()) / (1000 * 60 * 60 * 24))
+          Math.ceil((deadlineDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
         );
         setDaysLeft(calculatedDaysLeft);
       } else {
@@ -49,7 +50,7 @@ const ManageGroup = ({ group }) => {
 
   const handleSaveChanges = async () => {
     try {
-      const docRef = doc(db, 'Groups', group.id); // Ensure `db` and `group` are defined
+      const docRef = doc(db, "Groups", group.id); // Ensure `db` and `group` are defined
       await updateDoc(docRef, {
         GroupName,
       });
@@ -103,10 +104,10 @@ const ManageGroup = ({ group }) => {
         </div>
 
         <DialogFooter className="mt-4 flex flex-col-reverse">
-          <Button variant="secondary" onClick={handleSaveChanges}>
+          <Button variant="outline" onClick={handleSaveChanges}>
             Save Changes
           </Button>
-          <Button variant="primary" onClick={() => SetIsManageGroup(false)}>
+          <Button variant="secondary" onClick={() => SetIsManageGroup(false)}>
             Cancel
           </Button>
         </DialogFooter>

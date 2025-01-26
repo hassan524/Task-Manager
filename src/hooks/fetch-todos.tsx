@@ -2,9 +2,11 @@ import { useEffect, useState } from "react";
 import { db } from "@/main/firebase";
 import { doc, onSnapshot } from "firebase/firestore";
 import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store/Store";
+
 
 const fetchTodos = () => {
-    const myData = useSelector((state) => state.user); // Redux state se user data le raha hai
+    const myData = useSelector((state: RootState) => state.user); // Redux state se user data le raha hai
     const [todos, setTodos] = useState([]); // Todos ka state
 
     useEffect(() => {

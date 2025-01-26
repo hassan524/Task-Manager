@@ -317,7 +317,9 @@ const Home = () => {
                 </div>
               ))
             ) : (
-              <div className="text-gray-400">No Todos Yet</div>
+              <div className="absolute left-[50%] top-[50%] translate-x-[-50%] text-gray-300">
+              No Todos Yet
+            </div>
             )}
           </div>
         </div>

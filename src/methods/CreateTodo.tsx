@@ -6,9 +6,11 @@ import MyContext from "@/contexts/context";
 import { useSelector } from "react-redux";
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { db } from "@/main/firebase";
+import { RootState } from "@/redux/store/Store";
+
 
 const CreateTodo = ({ DefaultTodo, NoteForTodo }) => {
-  const myData = useSelector((state) => state.user);
+  const myData = useSelector((state: RootState) => state.user);
   const { IsTodoOpen, SetIsTodoOpen } = useContext(MyContext);
   const [todoName, setTodoName] = useState("");
 

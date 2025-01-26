@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -15,13 +15,14 @@ import "react-datepicker/dist/react-datepicker.css";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "@/main/firebase";
 import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store/Store";
 import { getCurrentDate } from "@/utils/date";
 
 const CreateProject = () => {
   const { IsProjectOpen, setIsProjectOpen, SetIsProjectCreate } = useContext(MyContext);
   const [projectName, setProjectName] = useState("");
   const [deadline, setDeadline] = useState<Date | null>(null);
-  const myData = useSelector((state) => state.user);
+  const myData = useSelector((state: RootState) => state.user);
 
   const handleSubmit = async () => {
     try {
@@ -34,11 +35,11 @@ const CreateProject = () => {
         projectName,
         deadline,
         Authorid: myData.id,
-        createdAt: currentDate, 
+        createdAt: currentDate,
         id: projectId,
-        type: 'project'
+        type: 'projects'
       });
-      
+
       SetIsProjectCreate(true)
     } catch (error) {
       console.error("Error creating project:", error);
@@ -76,7 +77,7 @@ const CreateProject = () => {
             </label>
             <DatePicker
               selected={deadline}
-              onChange={(date) => setDeadline(date)}
+              onChange={(date: Date) => setDeadline(date)}  // Accepts Date as input
               showMonthDropdown
               showYearDropdown
               dropdownMode="select"

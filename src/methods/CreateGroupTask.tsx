@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -16,13 +16,14 @@ import { useSelector } from "react-redux";
 import { getCurrentDate } from "@/utils/date";
 import { db } from "@/main/firebase";
 import { doc, setDoc } from "firebase/firestore";
+import { RootState } from "@/redux/store/Store";
 
 const CreateGroupTask = ({ GroupOfProject }) => {
   const { IsGroupTaskOpen, setIsGroupTaskOpen, SetIsGroupProjectCreate } = useContext(MyContext);
   const [GroupName, setGroupName] = useState("");
-  const [deadline, setDeadline] = useState(null);
+  const [deadline, setDeadline] = useState<Date | null>(null);  // Define deadline type as Date or null
 
-  const myData = useSelector((state) => state.user);
+  const myData = useSelector((state: RootState) => state.user);
 
   const handleSubmit = async () => {
     try {
@@ -31,7 +32,7 @@ const CreateGroupTask = ({ GroupOfProject }) => {
 
       const collectionName = GroupOfProject ? "GroupOfProject" : "Groups";
       const documentId = GroupId;
-      const type = GroupOfProject ? 'GroupOfProject' : 'Groups'
+      const type = GroupOfProject ? 'GroupOfProject' : 'Groups';
 
       await setDoc(doc(db, collectionName, documentId), {
         IsCompleted: false,
@@ -82,7 +83,7 @@ const CreateGroupTask = ({ GroupOfProject }) => {
             </label>
             <DatePicker
               selected={deadline}
-              onChange={(date) => setDeadline(date)}
+              onChange={(date: Date) => setDeadline(date)}  // Properly typed as Date
               showMonthDropdown
               showYearDropdown
               dropdownMode="select"

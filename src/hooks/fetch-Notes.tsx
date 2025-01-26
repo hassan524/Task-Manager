@@ -2,9 +2,11 @@ import { useEffect, useState } from "react";
 import { db } from "@/main/firebase";
 import { collection, query, where, onSnapshot } from "firebase/firestore";
 import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store/Store";
+
 
 const fetchNotes = () => {
-    const myData = useSelector((state) => state.user);
+    const myData = useSelector((state: RootState) => state.user);
     const [notes, setNotes] = useState([]);
 
     useEffect(() => {

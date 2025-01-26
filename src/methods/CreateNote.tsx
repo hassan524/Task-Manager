@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -19,12 +19,14 @@ import MyContext from "@/contexts/context";
 import { addDoc, collection } from "firebase/firestore";
 import { db } from "@/main/firebase";
 import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store/Store";
+
 
 const CreateNote = () => {
   const { IsNoteOpen, SetIsNoteOpen } = useContext(MyContext);
   const [noteType, setNoteType] = useState("");
 
-  const myData = useSelector((state) => state.user);
+  const myData = useSelector((state: RootState) => state.user);
 
   const handleNote = async () => {
     try {
@@ -81,7 +83,7 @@ const CreateNote = () => {
         <DialogFooter className="mt-3 flex flex-col-reverse gap-2">
           <button
             className="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200"
-            onClick={() => setIsNoteOpen(false)}
+            onClick={() => SetIsNoteOpen(false)}
           >
             Cancel
           </button>

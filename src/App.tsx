@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import StartLayout from './render/layouts/StartLayout';
 import AOS from 'aos';
@@ -8,7 +7,7 @@ import Login from './render/Pages/login';
 import Sign from './render/Pages/sign';
 import MainLayout from './render/layouts/MainLayout';
 import Home from './render/Pages/Home';
-import DashBoard from './render/Pages/Dashboard';
+import DashBoard from './render/Pages/DashBoard';
 import { MyProvider } from './contexts/context';
 import CompletedGroup from './render/Pages/CompletedGroup';
 import CompletedProject from './render/Pages/CompletedProject';

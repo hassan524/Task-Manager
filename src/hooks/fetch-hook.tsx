@@ -2,9 +2,11 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { collection, query, where, onSnapshot } from "firebase/firestore";
 import { db } from "@/main/firebase";
+import { RootState } from "@/redux/store/Store";
+
 
 const useFetchData = () => {
-  const myData = useSelector((state) => state.user); // Import user data from Redux state
+  const myData = useSelector((state: RootState) => state.user); // Import user data from Redux state
   const [data, setData] = useState({
     projects: [],
     groupTasks: [],

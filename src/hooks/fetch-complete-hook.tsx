@@ -2,9 +2,10 @@ import { useState, useEffect } from "react";
 import { db } from "@/main/firebase";
 import { collection, query, where, onSnapshot } from "firebase/firestore";
 import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store/Store";
 
 const useFetchComplete = () => {
-  const myData = useSelector((state) => state.user); // Get user data from Redux state
+  const myData = useSelector((state: RootState) => state.user); // Get user data from Redux state
   const [completedProjects, setCompletedProjects] = useState([]);
   const [completedGroups, setCompletedGroups] = useState([]);
   const [completedTasks, setCompletedTasks] = useState([]);

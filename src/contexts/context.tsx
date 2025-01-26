@@ -20,11 +20,12 @@ import {
   // Button, 
 } from "@/components/ui/alert-dialog"; // Adjust import paths as needed.
 import { Button } from "@/components/ui/button";
+import { RootState } from "@/redux/store/Store";
 
-const MyContext = createContext<MyContextType | undefined>(undefined);
+const MyContext = createContext(undefined);
 
 export const MyProvider = ({ children }: { children: React.ReactNode }) => {
-  const myData = useSelector((state) => state.user);
+  const myData = useSelector((state: RootState) => state.user);
 
   const [IsProjectOpen, setIsProjectOpen] = useState(false);
   const [IsGroupTaskOpen, setIsGroupTaskOpen] = useState(false);
@@ -46,6 +47,7 @@ export const MyProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Delete function
   async function deleteDocument(type: any) {
+    console.log(type)
     const docRef = doc(db, type.type, type.id);
     await deleteDoc(docRef);
   }
@@ -208,17 +210,25 @@ export const MyProvider = ({ children }: { children: React.ReactNode }) => {
       }}
     >
       {children}
-      <AlertDialog open={IsCompleteDialogOpen} onOpenChange={IsCompleteDialogOpen} >
+      <AlertDialog
+        open={IsCompleteDialogOpen}
+        onOpenChange={(open: boolean) => SetIsCompleteDialogOpen(open)}
+      >
         <AlertDialogContent className="sm:max-w-[425px] w-[90vw] p-6 rounded-xl shadow-lg bg-white">
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
           </AlertDialogHeader>
           <AlertDialogFooter className="flex flex-col-reverse gap-3">
-            <Button className="text-white font-semibold" onClick={cancelComplete}>Cancel</Button>
-            <Button className="text-white font-semibold" onClick={confirmComplete}>Yes, Complete</Button>
+            <Button className="text-white font-semibold" onClick={cancelComplete}>
+              Cancel
+            </Button>
+            <Button className="text-white font-semibold" onClick={confirmComplete}>
+              Yes, Complete
+            </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
     </MyContext.Provider>
   );
 };
