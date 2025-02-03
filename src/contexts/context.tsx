@@ -65,7 +65,7 @@ export const MyProvider = ({ children }: { children: React.ReactNode }) => {
     }
   
     // ✅ Directly mark individual Task as completed
-    if (type.type === "Task") {
+    if (type.type === "Tasks") {
       const docRef = doc(db, "Tasks", type.id);
       await updateDoc(docRef, { IsCompleted: true });
       return;
@@ -89,9 +89,13 @@ export const MyProvider = ({ children }: { children: React.ReactNode }) => {
   
         if (allCompleted) {
           await updateDoc(docRef, { IsCompleted: true });
-        } else {
+        }
+        
+         else {
           alert("Please first complete all tasks in this group project");
         }
+      } else {
+        await updateDoc(docRef, { IsCompleted: true });
       }
       return;
     }
@@ -117,9 +121,12 @@ export const MyProvider = ({ children }: { children: React.ReactNode }) => {
         } else {
           alert("Please first complete all tasks of this group");
         }
+      }  else {
+        await updateDoc(docRef, { IsCompleted: true });
       }
+    
       return;
-    }
+    } 
   
     // ✅ Complete Projects ONLY IF all GroupOfProject are completed
     if (type.type === "projects") {
@@ -142,7 +149,10 @@ export const MyProvider = ({ children }: { children: React.ReactNode }) => {
         } else {
           alert("Please first complete all groups in this project");
         }
+      }  else {
+        await updateDoc(docRef, { IsCompleted: true });
       }
+    
     }
   }
   
