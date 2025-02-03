@@ -52,55 +52,101 @@ export const MyProvider = ({ children }: { children: React.ReactNode }) => {
     await deleteDoc(docRef);
   }
 
-  // Complete function
+
+
   async function Complete(type: any) {
+    console.log("Completing:", type); // Debugging log
+  
+    // ✅ Directly mark TasksOfGroupProjects as completed (No checking, No alerts)
+    if (type.type === "TasksOfGroupProjects") {
+      const docRef = doc(db, "TasksOfGroupProjects", type.id);
+      await updateDoc(docRef, { IsCompleted: true });
+      return; // 🚀 Just complete and exit
+    }
+  
+    // ✅ Directly mark individual Task as completed
     if (type.type === "Task") {
       const docRef = doc(db, "Tasks", type.id);
       await updateDoc(docRef, { IsCompleted: true });
-    } else if (type.type === "GroupOfTask2") {
-      const docRef = doc(db, "GroupOfTask2", type.id);
-      await updateDoc(docRef, { IsCompleted: true });
-    } else if (type.type === "Groups") {
-      const docRef = doc(db, "Groups", type.id);
-      const q = query(collection(db, "GroupOfTask2"), where("ProjectId", "==", type.id));
-      const querySnapshot = await getDocs(q);
-      const docsData = querySnapshot.docs.map((doc) => doc.data());
-      const allCompleted = docsData.every((doc) => doc.IsCompleted === true);
-
-      if (allCompleted) {
-        await updateDoc(docRef, { IsCompleted: true });
-      } else {
-        alert("Please first complete all tasks of this group");
-      }
-    } else if (type.type === "TasksOfGroupProjects") {
-      const docRef = doc(db, "TasksOfGroupProjects", type.id);
-      await updateDoc(docRef, { IsCompleted: true });
-    } else if (type.type === "GroupOfProject") {
+      return;
+    }
+  
+    // ✅ Complete GroupOfProject ONLY IF all its tasks are completed
+    if (type.type === "GroupOfProject") {
       const docRef = doc(db, "GroupOfProject", type.id);
-      const q = query(collection(db, "TasksOfGroupProjects"), where("ProjectId", "==", type.id));
+      const q = query(
+        collection(db, "TasksOfGroupProjects"),
+        where("ProjectId", "==", type.id)
+      );
+  
+      await new Promise((resolve) => setTimeout(resolve, 500)); // Allow Firestore updates
       const querySnapshot = await getDocs(q);
-      const docsData = querySnapshot.docs.map((doc) => doc.data());
-      const allCompleted = docsData.every((doc) => doc.IsCompleted === true);
-
-      if (allCompleted) {
-        await updateDoc(docRef, { IsCompleted: true });
-      } else {
-        alert("Please first complete all tasks of this group");
+  
+      if (!querySnapshot.empty) {
+        const allCompleted = querySnapshot.docs.every(
+          (doc) => doc.data().IsCompleted === true
+        );
+  
+        if (allCompleted) {
+          await updateDoc(docRef, { IsCompleted: true });
+        } else {
+          alert("Please first complete all tasks in this group project");
+        }
       }
-    } else if (type.type === "project") {
-      const docRef = doc(db, "projects", type.id);
-      const q = query(collection(db, "GroupOfProject"), where("ProjectId", "==", type.id));
+      return;
+    }
+  
+    // ✅ Complete Groups ONLY IF all GroupOfTask2 tasks are completed
+    if (type.type === "Groups") {
+      const docRef = doc(db, "Groups", type.id);
+      const q = query(
+        collection(db, "GroupOfTask2"),
+        where("ProjectId", "==", type.id)
+      );
+  
+      await new Promise((resolve) => setTimeout(resolve, 500)); // Allow Firestore updates
       const querySnapshot = await getDocs(q);
-      const docsData = querySnapshot.docs.map((doc) => doc.data());
-      const allCompleted = docsData.every((doc) => doc.IsCompleted === true);
-
-      if (allCompleted) {
-        await updateDoc(docRef, { IsCompleted: true });
-      } else {
-        alert("Please first complete all tasks of this group");
+  
+      if (!querySnapshot.empty) {
+        const allCompleted = querySnapshot.docs.every(
+          (doc) => doc.data().IsCompleted === true
+        );
+  
+        if (allCompleted) {
+          await updateDoc(docRef, { IsCompleted: true });
+        } else {
+          alert("Please first complete all tasks of this group");
+        }
+      }
+      return;
+    }
+  
+    // ✅ Complete Projects ONLY IF all GroupOfProject are completed
+    if (type.type === "projects") {
+      const docRef = doc(db, "projects", type.id);
+      const q = query(
+        collection(db, "GroupOfProject"),
+        where("ProjectId", "==", type.id)
+      );
+  
+      await new Promise((resolve) => setTimeout(resolve, 500)); // Allow Firestore updates
+      const querySnapshot = await getDocs(q);
+  
+      if (!querySnapshot.empty) {
+        const allCompleted = querySnapshot.docs.every(
+          (doc) => doc.data().IsCompleted === true
+        );
+  
+        if (allCompleted) {
+          await updateDoc(docRef, { IsCompleted: true });
+        } else {
+          alert("Please first complete all groups in this project");
+        }
       }
     }
   }
+  
+  
 
   // Default Todo Complete
   async function DefaultTodoComplete(todo: { id: string }) {

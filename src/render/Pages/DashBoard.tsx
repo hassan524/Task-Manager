@@ -221,7 +221,7 @@ const DashBoard = () => {
                                         <Checkbox
                                           // checked={isChecked} 
                                           onClick={() =>
-                                            handleComplete(group)
+                                            handleComplete(task)
                                           } checked={task.IsCompleted}
                                         />
                                         <i className="bi bi-check2-square text-[#CCEEBC] text-xl"></i>
