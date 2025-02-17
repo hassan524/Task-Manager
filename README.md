@@ -1,6 +1,6 @@
 # Task Manager
 
-A complete task management application with authentication, built using **React** and **Firebase** **Typescript** . Where you can manage Tasks, Groups of Task, And Projects, With Deadlines, And also you can write your own Notes and Todos
+A complete task management application with authentication, built using **React** and **Firebase** **Typescript**
 
 ## Project Setup
 
