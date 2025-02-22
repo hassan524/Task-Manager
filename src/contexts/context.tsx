@@ -18,7 +18,7 @@ import {
   AlertDialogFooter,
   AlertDialogTitle,
   // Button, 
-} from "@/components/ui/alert-dialog"; // Adjust import paths as needed.
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { RootState } from "@/redux/store/Store";
 
@@ -45,7 +45,6 @@ export const MyProvider = ({ children }: { children: React.ReactNode }) => {
   const [IsCompleteDialogOpen, SetIsCompleteDialogOpen] = useState(false);
   const [currentCompleteTask, setCurrentCompleteTask] = useState<any>(null);
 
-  // Delete function
   async function deleteDocument(type: any) {
     console.log(type)
     const docRef = doc(db, type.type, type.id);
@@ -57,21 +56,18 @@ export const MyProvider = ({ children }: { children: React.ReactNode }) => {
   async function Complete(type: any) {
     console.log("Completing:", type); // Debugging log
   
-    // ✅ Directly mark TasksOfGroupProjects as completed (No checking, No alerts)
     if (type.type === "TasksOfGroupProjects") {
       const docRef = doc(db, "TasksOfGroupProjects", type.id);
       await updateDoc(docRef, { IsCompleted: true });
       return; // 🚀 Just complete and exit
     }
   
-    // ✅ Directly mark individual Task as completed
     if (type.type === "Tasks") {
       const docRef = doc(db, "Tasks", type.id);
       await updateDoc(docRef, { IsCompleted: true });
       return;
     }
   
-    // ✅ Complete GroupOfProject ONLY IF all its tasks are completed
     if (type.type === "GroupOfProject") {
       const docRef = doc(db, "GroupOfProject", type.id);
       const q = query(
@@ -79,7 +75,7 @@ export const MyProvider = ({ children }: { children: React.ReactNode }) => {
         where("ProjectId", "==", type.id)
       );
   
-      await new Promise((resolve) => setTimeout(resolve, 500)); // Allow Firestore updates
+      await new Promise((resolve) => setTimeout(resolve, 500)); 
       const querySnapshot = await getDocs(q);
   
       if (!querySnapshot.empty) {
@@ -100,7 +96,6 @@ export const MyProvider = ({ children }: { children: React.ReactNode }) => {
       return;
     }
   
-    // ✅ Complete Groups ONLY IF all GroupOfTask2 tasks are completed
     if (type.type === "Groups") {
       const docRef = doc(db, "Groups", type.id);
       const q = query(
@@ -108,7 +103,7 @@ export const MyProvider = ({ children }: { children: React.ReactNode }) => {
         where("ProjectId", "==", type.id)
       );
   
-      await new Promise((resolve) => setTimeout(resolve, 500)); // Allow Firestore updates
+      await new Promise((resolve) => setTimeout(resolve, 500)); 
       const querySnapshot = await getDocs(q);
   
       if (!querySnapshot.empty) {
@@ -128,7 +123,6 @@ export const MyProvider = ({ children }: { children: React.ReactNode }) => {
       return;
     } 
   
-    // ✅ Complete Projects ONLY IF all GroupOfProject are completed
     if (type.type === "projects") {
       const docRef = doc(db, "projects", type.id);
       const q = query(
